@@ -6,9 +6,24 @@
 </p>
 
 <p align="center">
+  <img src="docs/media/trailer-16x9.gif" alt="trailer's own trailer, made by trailer from this repo: a Claude Code terminal running /trailer:new, the film config cued to the voice, the self-review contact sheet, and the same film in 16:9, 9:16 and 1:1" width="68%">
+  &nbsp;
+  <img src="docs/media/trailer-9x16.gif" alt="The 30-second vertical short of the same film, opening on 'No screen recorder. Your repo is the script.'" width="24%">
+</p>
+
+<p align="center">
+  <strong>This trailer was made by trailer, from this repo.</strong>
+  <a href="https://github.com/Dileep2896/trailer/releases/download/v0.1.0/trailer-16x9.mp4">Watch the 60-second film with sound</a> ·
+  <a href="https://github.com/Dileep2896/trailer/releases/download/v0.1.0/trailer-9x16-short.mp4">the vertical short</a> ·
+  <a href=".trailer/trailer.config.json">its config</a> ·
+  <a href=".trailer/script.md">its script</a>
+</p>
+
+<p align="center">
   <img src="docs/media/driftcheck-16x9.gif" alt="A 16:9 explainer film made by trailer for Driftcheck, a fictional example app: a stamped incident title, a config diff between staging and production, then the recreated app UI flagging the drifted keys" width="68%">
   &nbsp;
   <img src="docs/media/driftcheck-9x16.gif" alt="The 9:16 vertical short cut of the same film, with large burned-in captions" width="24%">
+  <br><em>Another example: Driftcheck, a made-up app in <a href="examples/driftcheck">examples/driftcheck</a>.</em>
 </p>
 
 <p align="center">

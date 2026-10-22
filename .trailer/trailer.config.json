@@ -1,0 +1,1610 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Dileep2896/trailer/main/engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "trailer",
+  "tagline": "Point it at your repo. Get a narrated film.",
+  "repoUrl": "https://github.com/Dileep2896/trailer",
+  "link": {
+    "text": "github.com/Dileep2896/trailer",
+    "url": "https://github.com/Dileep2896/trailer"
+  },
+  "aspect": "16:9",
+  "targetSeconds": 60,
+  "fitSeconds": 62,
+  "narration": {
+    "person": "third"
+  },
+  "voice": {
+    "provider": "deepgram",
+    "model": "aura-2-hermes-en",
+    "speed": 1.0
+  },
+  "meta": {
+    "useCase": "explainer",
+    "format": "F18 Speedrun",
+    "formatWhy": "The promise is a run from repo to film: each split is one step a person would otherwise do by hand (read, script, rebuild the UI, voice, review), timed by the narrator's words instead of a stopwatch.",
+    "tone": "quick, wry, confident",
+    "sources": [
+      {
+        "claim": "20 story formats",
+        "source": "README.md:46; skills/trailer/references/formats.md (F01 to F20)"
+      },
+      {
+        "claim": "5 skills",
+        "source": "skills/ (trailer, trailer-launch, trailer-jobhunt, trailer-hackathon, trailer-shorts)"
+      },
+      {
+        "claim": "3 aspects: 16:9, 9:16, 1:1 from one config",
+        "source": "README.md:57"
+      },
+      {
+        "claim": "captions burned in plus .srt and .vtt",
+        "source": "README.md:60"
+      },
+      {
+        "claim": "renders locally, nothing uploaded",
+        "source": "README.md:66"
+      },
+      {
+        "claim": "this film was made by trailer from its own repo",
+        "source": ".trailer/trailer.config.json (this file)"
+      }
+    ]
+  },
+  "theme": {
+    "mode": "dark",
+    "bg": "#07080c",
+    "surface": "#11131b",
+    "ink": "#f2f4f8",
+    "muted": "#9aa1b2",
+    "accent": "#c8ff2e",
+    "accent2": "#ff4fd8",
+    "warn": "#ff5a4f",
+    "fonts": {
+      "display": "Unbounded",
+      "ui": "Instrument Sans",
+      "mono": "Share Tech Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 800,
+    "tracking": -0.035,
+    "radius": 14,
+    "background": "scanlines",
+    "chrome": "terminal",
+    "transition": "glitch",
+    "motion": "snappy",
+    "camera": "push",
+    "type": "stacked",
+    "motif": "scoreboard",
+    "grain": 0.05,
+    "rhythm": "mono"
+  },
+  "app": {
+    "font": "Inter",
+    "mono": "JetBrains Mono",
+    "bg": "#0b111c",
+    "surface": "#151d2b",
+    "ink": "#eef2f6",
+    "muted": "#a3aebb",
+    "accent": "#3b82f6",
+    "onAccent": "#ffffff",
+    "good": "#34d399",
+    "bad": "#f87171",
+    "warn": "#fbbf24",
+    "radius": 10,
+    "size": 30,
+    "dark": true
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "box",
+    "size": 50,
+    "fontRole": "ui",
+    "weight": 700,
+    "maxWords": 6
+  },
+  "music": {
+    "bpm": 128,
+    "mood": "driving"
+  },
+  "scenes": [
+    {
+      "id": "open",
+      "type": "title",
+      "layout": "hud",
+      "transition": "cut",
+      "lines": [
+        "$ git push --tags        v1.0 shipped",
+        "TODO  a demo video for the launch"
+      ],
+      "eyebrow": "FRIDAY, 17:40",
+      "title": "Now make the demo.",
+      "accent": "demo",
+      "say": "Friday. The feature ships. Now someone has to make the demo.",
+      "breath": 0.6,
+      "firstFrame": "settled"
+    },
+    {
+      "id": "takes",
+      "type": "calendar",
+      "transition": "flash",
+      "pages": [
+        {
+          "day": "TAKE",
+          "date": "1",
+          "note": "missed the menu",
+          "at": "record"
+        },
+        {
+          "day": "TAKE",
+          "date": "2",
+          "note": "wrong tab open",
+          "at": "miss"
+        },
+        {
+          "day": "TAKE",
+          "date": "3",
+          "note": "music too loud",
+          "at": "start"
+        },
+        {
+          "day": "TAKE",
+          "date": "4",
+          "note": "a button moved",
+          "at": "over"
+        }
+      ],
+      "sfx": [
+        {
+          "at": "record",
+          "sound": "beep"
+        }
+      ],
+      "say": "So you hit record, miss a click, and start over."
+    },
+    {
+      "id": "feed",
+      "type": "split",
+      "mode": "versus",
+      "divider": "line",
+      "transition": "whip",
+      "left": {
+        "label": "WHAT SHIPS",
+        "tone": "bad",
+        "title": "demo-final-v3.mov",
+        "elements": [
+          {
+            "type": "card",
+            "icon": "television",
+            "title": "Screen recording",
+            "body": "Clicks and a cursor over stock music."
+          },
+          {
+            "type": "chips",
+            "items": [
+              {
+                "text": "no captions",
+                "tone": "bad"
+              },
+              {
+                "text": "no story",
+                "tone": "bad"
+              },
+              {
+                "text": "stale next release",
+                "tone": "warn"
+              }
+            ]
+          }
+        ],
+        "app": {
+          "size": 30
+        }
+      },
+      "right": {
+        "label": "THE FEED",
+        "tone": "neutral",
+        "title": "Muted autoplay",
+        "elements": [
+          {
+            "type": "list",
+            "items": [
+              {
+                "title": "launch video",
+                "sub": "screen recording, music only",
+                "badge": {
+                  "text": "skipped",
+                  "tone": "bad"
+                }
+              },
+              {
+                "title": "another launch video",
+                "sub": "screen recording, music only",
+                "badge": {
+                  "text": "skipped",
+                  "tone": "bad"
+                }
+              },
+              {
+                "title": "yours",
+                "sub": "screen recording, music only",
+                "badge": {
+                  "text": "skipped",
+                  "tone": "bad"
+                },
+                "at": "scrolls"
+              }
+            ]
+          }
+        ],
+        "verdict": {
+          "text": "SCROLLED PAST",
+          "at": "past",
+          "tone": "bad",
+          "size": 76
+        },
+        "app": {
+          "size": 30
+        }
+      },
+      "say": "What ships is a screen recording with music. No story. The feed scrolls past.",
+      "breath": 0.9
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "transition": "glitch",
+      "captions": "off",
+      "layout": "center",
+      "beats": [
+        {
+          "text": "Enter trailer.",
+          "accent": "trailer",
+          "fx": "punch",
+          "at": 0,
+          "until": "point"
+        },
+        {
+          "text": "Repo in. Film out.",
+          "accent": "Film",
+          "fx": "stamp",
+          "at": "point"
+        }
+      ],
+      "say": "Enter trailer. Point it at your repo; it makes the film.",
+      "breath": 0.5
+    },
+    {
+      "id": "read",
+      "type": "ui",
+      "frame": "app",
+      "title": "claude  ~/your-app",
+      "transition": "zoom",
+      "width": 1180,
+      "sideAlign": "right",
+      "side": {
+        "eyebrow": "SPLIT 1  READ",
+        "title": "Reads it. Never runs it.",
+        "accent": "Never",
+        "points": [
+          {
+            "text": "README, routes, seed data",
+            "at": "reads"
+          },
+          {
+            "text": "Who hurts, what breaks",
+            "at": "hurts"
+          },
+          {
+            "text": "1 format of 20",
+            "at": "formats"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "code",
+          "id": "term",
+          "lines": [
+            {
+              "text": "> /trailer:new",
+              "at": 0
+            },
+            {
+              "text": "  Reading README, routes, theme, seed data",
+              "at": "reads"
+            },
+            {
+              "text": "  Wrote brief.md   who hurts, what breaks",
+              "at": "hurts"
+            },
+            {
+              "text": "  Shortlist  F18 Speedrun, F16, F04",
+              "at": "picks"
+            },
+            {
+              "text": "  Picked     F18 Speedrun   1 of 20",
+              "at": "formats"
+            },
+            {
+              "text": "  Wrote script.md  a source for every number",
+              "at": "-0.6s"
+            }
+          ],
+          "highlight": [
+            5
+          ]
+        }
+      ],
+      "camera": [
+        {
+          "at": "picks",
+          "focus": "term.line4",
+          "zoom": 1.35
+        },
+        {
+          "at": "-0.4s",
+          "reset": true
+        }
+      ],
+      "highlight": [
+        {
+          "at": "formats",
+          "target": "term.line4"
+        }
+      ],
+      "notes": [
+        {
+          "at": "formats",
+          "target": "term.line4",
+          "text": "picked to fit the problem",
+          "side": "bottom"
+        }
+      ],
+      "say": "One command. It reads your code, finds who hurts, and picks one of 20 story formats."
+    },
+    {
+      "id": "cue",
+      "type": "ui",
+      "frame": "app",
+      "title": ".trailer/trailer.config.json",
+      "transition": "push",
+      "width": 1560,
+      "poster": true,
+      "elements": [
+        {
+          "type": "row",
+          "id": "split",
+          "widths": [
+            1,
+            1.15
+          ],
+          "children": [
+            {
+              "type": "code",
+              "id": "json",
+              "file": "trailer.config.json",
+              "lines": [
+                {
+                  "text": "{ \"type\": \"ui\",",
+                  "at": 0
+                },
+                {
+                  "text": "  \"app\": { \"accent\": \"#3b82f6\" },",
+                  "at": "rebuilds"
+                },
+                {
+                  "text": "  \"cursor\": [{ \"at\": \"flagged\" }],",
+                  "at": "click"
+                },
+                {
+                  "text": "  \"say\": \"...the drift is flagged.\"",
+                  "at": "click"
+                },
+                {
+                  "text": "}",
+                  "at": "click"
+                }
+              ],
+              "h": 330
+            },
+            {
+              "type": "shapes",
+              "id": "tl",
+              "h": 330,
+              "frame": true,
+              "view": [
+                120,
+                60
+              ],
+              "items": [
+                {
+                  "kind": "text",
+                  "text": "VOICE",
+                  "x": 3,
+                  "y": 12,
+                  "size": 3,
+                  "font": "mono",
+                  "fill": "muted"
+                },
+                {
+                  "kind": "text",
+                  "text": "CURSOR",
+                  "x": 3,
+                  "y": 26,
+                  "size": 3,
+                  "font": "mono",
+                  "fill": "muted"
+                },
+                {
+                  "kind": "text",
+                  "text": "CAPTIONS",
+                  "x": 3,
+                  "y": 40,
+                  "size": 3,
+                  "font": "mono",
+                  "fill": "muted"
+                },
+                {
+                  "kind": "text",
+                  "text": "MUSIC",
+                  "x": 3,
+                  "y": 54,
+                  "size": 3,
+                  "font": "mono",
+                  "fill": "muted"
+                },
+                {
+                  "kind": "rect",
+                  "x": 28,
+                  "y": 6,
+                  "w": 14,
+                  "h": 9,
+                  "fill": "subtle",
+                  "stroke": "border",
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "text",
+                  "text": "the",
+                  "x": 35,
+                  "y": 12,
+                  "size": 3,
+                  "anchor": "middle",
+                  "font": "mono",
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "rect",
+                  "x": 44,
+                  "y": 6,
+                  "w": 20,
+                  "h": 9,
+                  "fill": "subtle",
+                  "stroke": "border",
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "text",
+                  "text": "drift",
+                  "x": 54,
+                  "y": 12,
+                  "size": 3,
+                  "anchor": "middle",
+                  "font": "mono",
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "rect",
+                  "x": 66,
+                  "y": 6,
+                  "w": 10,
+                  "h": 9,
+                  "fill": "subtle",
+                  "stroke": "border",
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "text",
+                  "text": "is",
+                  "x": 71,
+                  "y": 12,
+                  "size": 3,
+                  "anchor": "middle",
+                  "font": "mono",
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "rect",
+                  "name": "word",
+                  "x": 78,
+                  "y": 6,
+                  "w": 30,
+                  "h": 9,
+                  "fill": "subtle",
+                  "stroke": "border",
+                  "at": "rebuilds",
+                  "recolor": [
+                    {
+                      "at": "spoken",
+                      "fill": "accent",
+                      "stroke": "accent"
+                    }
+                  ]
+                },
+                {
+                  "kind": "text",
+                  "text": "flagged",
+                  "x": 93,
+                  "y": 12,
+                  "size": 3,
+                  "anchor": "middle",
+                  "font": "mono",
+                  "weight": 700,
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "line",
+                  "points": [
+                    [
+                      93,
+                      17
+                    ],
+                    [
+                      93,
+                      21
+                    ]
+                  ],
+                  "stroke": "accent",
+                  "width": 0.5,
+                  "dash": [
+                    1,
+                    1
+                  ],
+                  "at": "spoken"
+                },
+                {
+                  "kind": "dot",
+                  "name": "click",
+                  "x": 93,
+                  "y": 25,
+                  "r": 2.6,
+                  "fill": "accent",
+                  "stroke": "accent",
+                  "pulse": true,
+                  "at": "spoken"
+                },
+                {
+                  "kind": "rect",
+                  "x": 28,
+                  "y": 34,
+                  "w": 80,
+                  "h": 9,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "cued"
+                },
+                {
+                  "kind": "text",
+                  "text": "the drift is flagged",
+                  "x": 68,
+                  "y": 40,
+                  "size": 3,
+                  "anchor": "middle",
+                  "at": "cued"
+                },
+                {
+                  "kind": "line",
+                  "points": [
+                    [
+                      28,
+                      54
+                    ],
+                    [
+                      34,
+                      50
+                    ],
+                    [
+                      40,
+                      56
+                    ],
+                    [
+                      46,
+                      49
+                    ],
+                    [
+                      52,
+                      55
+                    ],
+                    [
+                      58,
+                      50
+                    ],
+                    [
+                      64,
+                      56
+                    ],
+                    [
+                      70,
+                      49
+                    ],
+                    [
+                      76,
+                      55
+                    ],
+                    [
+                      82,
+                      50
+                    ],
+                    [
+                      88,
+                      56
+                    ],
+                    [
+                      94,
+                      49
+                    ],
+                    [
+                      100,
+                      55
+                    ],
+                    [
+                      108,
+                      51
+                    ]
+                  ],
+                  "stroke": "muted",
+                  "width": 0.5,
+                  "draw": true,
+                  "at": "rebuilds"
+                },
+                {
+                  "kind": "sweep",
+                  "at": "cued",
+                  "to": "word"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "highlight": [
+        {
+          "at": "click",
+          "target": "json.line2"
+        }
+      ],
+      "spotlight": [
+        {
+          "at": "spoken",
+          "until": "-0.3s",
+          "target": "tl"
+        }
+      ],
+      "notes": [
+        {
+          "at": "spoken",
+          "target": "tl.click",
+          "text": "the click lands on its word",
+          "side": "left"
+        }
+      ],
+      "camera": [
+        {
+          "at": "spoken",
+          "focus": "tl",
+          "zoom": 1.25
+        },
+        {
+          "at": "-0.4s",
+          "reset": true
+        }
+      ],
+      "say": "It rebuilds your UI in your own colors, every click cued to a spoken word."
+    },
+    {
+      "id": "review",
+      "type": "ui",
+      "frame": "app",
+      "title": ".trailer/review/16x9/sheet.jpg",
+      "transition": "slide-stack",
+      "width": 1560,
+      "elements": [
+        {
+          "type": "chips",
+          "id": "steps",
+          "items": [
+            {
+              "text": "voice",
+              "tone": "good"
+            },
+            {
+              "text": "captions .srt .vtt",
+              "tone": "good"
+            },
+            {
+              "text": "music + sfx",
+              "tone": "good"
+            },
+            {
+              "text": "rendered locally",
+              "tone": "good"
+            }
+          ]
+        },
+        {
+          "type": "shapes",
+          "id": "sheet",
+          "h": 420,
+          "view": [
+            160,
+            64
+          ],
+          "items": [
+            {
+              "kind": "rect",
+              "x": 2,
+              "y": 2,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 6,
+              "y": 8,
+              "w": 22,
+              "h": 3,
+              "fill": "muted",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 6,
+              "y": 14,
+              "w": 14,
+              "h": 2,
+              "fill": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 42,
+              "y": 2,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 46,
+              "y": 7,
+              "w": 29,
+              "h": 12,
+              "fill": "subtle",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 82,
+              "y": 2,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 88,
+              "y": 9,
+              "w": 25,
+              "h": 6,
+              "fill": "accent",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 122,
+              "y": 2,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 126,
+              "y": 6,
+              "w": 29,
+              "h": 14,
+              "fill": "subtle",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 2,
+              "y": 34,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 6,
+              "y": 38,
+              "w": 29,
+              "h": 14,
+              "fill": "subtle",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "name": "bad",
+              "x": 42,
+              "y": 34,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "width": 0.6,
+              "at": "reviews",
+              "recolor": [
+                {
+                  "at": "frames",
+                  "stroke": "bad"
+                },
+                {
+                  "at": "fixes",
+                  "stroke": "good"
+                }
+              ]
+            },
+            {
+              "kind": "rect",
+              "x": 46,
+              "y": 38,
+              "w": 29,
+              "h": 10,
+              "fill": "subtle",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 47,
+              "y": 47,
+              "w": 27,
+              "h": 6,
+              "fill": "bad",
+              "opacity": 0.85,
+              "at": "frames",
+              "until": "fixes"
+            },
+            {
+              "kind": "rect",
+              "x": 47,
+              "y": 53,
+              "w": 27,
+              "h": 4,
+              "fill": "muted",
+              "at": "fixes"
+            },
+            {
+              "kind": "rect",
+              "x": 82,
+              "y": 34,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 88,
+              "y": 40,
+              "w": 25,
+              "h": 3,
+              "fill": "muted",
+              "at": "reviews"
+            },
+            {
+              "kind": "rect",
+              "x": 122,
+              "y": 34,
+              "w": 37,
+              "h": 26,
+              "fill": "surface",
+              "stroke": "border",
+              "at": "reviews"
+            },
+            {
+              "kind": "text",
+              "text": "trailer",
+              "x": 140.5,
+              "y": 49,
+              "size": 4,
+              "anchor": "middle",
+              "weight": 700,
+              "at": "reviews"
+            }
+          ]
+        },
+        {
+          "type": "toast",
+          "id": "done",
+          "title": "Round 2: nothing clipped",
+          "sub": "caption moved off the target",
+          "tone": "good",
+          "at": "fixes"
+        }
+      ],
+      "highlight": [
+        {
+          "at": "frames",
+          "target": "sheet.bad"
+        }
+      ],
+      "notes": [
+        {
+          "at": "frames",
+          "until": "fixes",
+          "target": "sheet.bad",
+          "text": "caption covers the target",
+          "side": "right"
+        }
+      ],
+      "camera": [
+        {
+          "at": "frames",
+          "focus": "sheet",
+          "zoom": 1.2
+        },
+        {
+          "at": "-0.4s",
+          "reset": true
+        }
+      ],
+      "say": "Then it narrates, captions and renders locally, reviews its own frames, and fixes them.",
+      "variants": {
+        "9:16": {
+          "elements": [
+            {
+              "type": "chips",
+              "id": "steps",
+              "items": [
+                {
+                  "text": "voice",
+                  "tone": "good"
+                },
+                {
+                  "text": "captions",
+                  "tone": "good"
+                },
+                {
+                  "text": "rendered locally",
+                  "tone": "good"
+                }
+              ]
+            },
+            {
+              "type": "shapes",
+              "id": "sheet",
+              "h": 560,
+              "view": [
+                80,
+                96
+              ],
+              "items": [
+                {
+                  "kind": "rect",
+                  "x": 2,
+                  "y": 2,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 7,
+                  "y": 7,
+                  "w": 22,
+                  "h": 3,
+                  "fill": "muted",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 42,
+                  "y": 2,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 47,
+                  "y": 7,
+                  "w": 26,
+                  "h": 9,
+                  "fill": "subtle",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 2,
+                  "y": 26,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 7,
+                  "y": 31,
+                  "w": 18,
+                  "h": 5,
+                  "fill": "accent",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 42,
+                  "y": 26,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews",
+                  "name": "bad",
+                  "width": 0.6,
+                  "recolor": [
+                    {
+                      "at": "frames",
+                      "stroke": "bad"
+                    },
+                    {
+                      "at": "fixes",
+                      "stroke": "good"
+                    }
+                  ]
+                },
+                {
+                  "kind": "rect",
+                  "x": 46,
+                  "y": 30,
+                  "w": 28,
+                  "h": 8,
+                  "fill": "subtle",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 47,
+                  "y": 38,
+                  "w": 26,
+                  "h": 5,
+                  "fill": "bad",
+                  "opacity": 0.85,
+                  "at": "frames",
+                  "until": "fixes"
+                },
+                {
+                  "kind": "rect",
+                  "x": 47,
+                  "y": 41,
+                  "w": 26,
+                  "h": 3,
+                  "fill": "muted",
+                  "at": "fixes"
+                },
+                {
+                  "kind": "rect",
+                  "x": 2,
+                  "y": 50,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 7,
+                  "y": 55,
+                  "w": 0,
+                  "h": 0,
+                  "fill": "",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 42,
+                  "y": 50,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 47,
+                  "y": 55,
+                  "w": 20,
+                  "h": 3,
+                  "fill": "muted",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 2,
+                  "y": 74,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 7,
+                  "y": 79,
+                  "w": 24,
+                  "h": 9,
+                  "fill": "subtle",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "rect",
+                  "x": 42,
+                  "y": 74,
+                  "w": 36,
+                  "h": 21,
+                  "fill": "surface",
+                  "stroke": "border",
+                  "at": "reviews"
+                },
+                {
+                  "kind": "text",
+                  "text": "trailer",
+                  "x": 60,
+                  "y": 87,
+                  "size": 4,
+                  "anchor": "middle",
+                  "weight": 700,
+                  "at": "reviews"
+                }
+              ]
+            },
+            {
+              "type": "toast",
+              "id": "done",
+              "title": "Round 2: nothing clipped",
+              "sub": "caption moved off the target",
+              "tone": "good",
+              "at": "fixes"
+            }
+          ],
+          "notes": [
+            {
+              "at": "frames",
+              "until": "fixes",
+              "target": "sheet.bad",
+              "text": "caption on the target",
+              "side": "bottom"
+            }
+          ],
+          "camera": [
+            {
+              "at": "frames",
+              "focus": "sheet.bad",
+              "zoom": 1.3
+            },
+            {
+              "at": "fixes",
+              "reset": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "aspects",
+      "type": "ui",
+      "frame": "none",
+      "transition": "iris",
+      "width": 1600,
+      "elements": [
+        {
+          "type": "shapes",
+          "id": "ar",
+          "h": 600,
+          "view": [
+            160,
+            64
+          ],
+          "items": [
+            {
+              "kind": "rect",
+              "name": "wide",
+              "x": 4,
+              "y": 8,
+              "w": 80,
+              "h": 45,
+              "fill": "surface",
+              "stroke": "accent",
+              "width": 0.6,
+              "draw": true,
+              "at": "config"
+            },
+            {
+              "kind": "rect",
+              "x": 12,
+              "y": 22,
+              "w": 46,
+              "h": 6,
+              "fill": "ink",
+              "at": "wide"
+            },
+            {
+              "kind": "rect",
+              "x": 12,
+              "y": 31,
+              "w": 30,
+              "h": 3,
+              "fill": "muted",
+              "at": "wide"
+            },
+            {
+              "kind": "rect",
+              "x": 24,
+              "y": 45,
+              "w": 40,
+              "h": 4,
+              "fill": "subtle",
+              "at": "wide"
+            },
+            {
+              "kind": "text",
+              "text": "16:9  1920 x 1080",
+              "x": 44,
+              "y": 60,
+              "size": 3.4,
+              "anchor": "middle",
+              "font": "mono",
+              "fill": "muted",
+              "at": "wide"
+            },
+            {
+              "kind": "rect",
+              "name": "tall",
+              "x": 92,
+              "y": 4,
+              "w": 28.1,
+              "h": 50,
+              "fill": "surface",
+              "stroke": "accent",
+              "width": 0.6,
+              "draw": true,
+              "at": "vertical"
+            },
+            {
+              "kind": "rect",
+              "x": 96,
+              "y": 18,
+              "w": 20,
+              "h": 5,
+              "fill": "ink",
+              "at": "vertical"
+            },
+            {
+              "kind": "rect",
+              "x": 97,
+              "y": 38,
+              "w": 18,
+              "h": 4,
+              "fill": "subtle",
+              "at": "vertical"
+            },
+            {
+              "kind": "text",
+              "text": "9:16",
+              "x": 106,
+              "y": 60,
+              "size": 3.4,
+              "anchor": "middle",
+              "font": "mono",
+              "fill": "muted",
+              "at": "vertical"
+            },
+            {
+              "kind": "rect",
+              "name": "square",
+              "x": 126,
+              "y": 15,
+              "w": 30,
+              "h": 30,
+              "fill": "surface",
+              "stroke": "accent",
+              "width": 0.6,
+              "draw": true,
+              "at": "square"
+            },
+            {
+              "kind": "rect",
+              "x": 130,
+              "y": 24,
+              "w": 22,
+              "h": 5,
+              "fill": "ink",
+              "at": "square"
+            },
+            {
+              "kind": "rect",
+              "x": 132,
+              "y": 38,
+              "w": 18,
+              "h": 3,
+              "fill": "subtle",
+              "at": "square"
+            },
+            {
+              "kind": "text",
+              "text": "1:1",
+              "x": 141,
+              "y": 60,
+              "size": 3.4,
+              "anchor": "middle",
+              "font": "mono",
+              "fill": "muted",
+              "at": "square"
+            }
+          ]
+        }
+      ],
+      "highlight": [
+        {
+          "at": "vertical",
+          "target": "ar.tall"
+        }
+      ],
+      "notes": [
+        {
+          "at": "square",
+          "target": "ar.square",
+          "text": "same voice, same cues",
+          "side": "top"
+        }
+      ],
+      "camera": [
+        {
+          "at": "vertical",
+          "focus": "ar",
+          "zoom": 1.08
+        },
+        {
+          "at": "-0.3s",
+          "reset": true
+        }
+      ],
+      "say": "One config renders a wide film, a vertical short and a square."
+    },
+    {
+      "id": "proof",
+      "type": "scoreboard",
+      "transition": "flash",
+      "bug": "FINAL",
+      "title": "REPO  TO  FILM",
+      "clock": "RUN COMPLETE",
+      "teams": [
+        {
+          "label": "STORY FORMATS",
+          "value": 20,
+          "from": 0,
+          "at": "recorder"
+        },
+        {
+          "label": "SKILLS",
+          "value": 5,
+          "from": 0,
+          "at": "film"
+        },
+        {
+          "label": "ASPECTS",
+          "value": 3,
+          "from": 0,
+          "at": "made"
+        }
+      ],
+      "lowerThird": {
+        "title": "Directed by a config file",
+        "sub": ".trailer/trailer.config.json, in this repo",
+        "at": "repo"
+      },
+      "ticker": "renders locally  ·  captions burned in, plus .srt and .vtt  ·  reads the code, never runs it  ·  only changed lines are re-voiced",
+      "captions": "top",
+      "say": "No screen recorder. This film was made by trailer, from its own repo.",
+      "breath": 0.8
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "card",
+      "transition": "dissolve",
+      "headline": "Your repo has a film in it.",
+      "accent": "film",
+      "say": "trailer. Open source on GitHub.",
+      "tagline": "/plugin install trailer@trailer",
+      "breath": 2.2
+    }
+  ],
+  "cuts": {
+    "short": {
+      "aspect": "9:16",
+      "targetSeconds": 28,
+      "fitSeconds": 30,
+      "scenes": [
+        "open",
+        "turn",
+        "read",
+        "review",
+        "proof",
+        "end"
+      ],
+      "captions": {
+        "position": "center-low",
+        "size": 68,
+        "maxWords": 3,
+        "case": "none",
+        "style": "box"
+      },
+      "overrides": {
+        "open": {
+          "layout": "card",
+          "lead": 0,
+          "transition": "cut",
+          "captions": "off",
+          "eyebrow": "YOUR NEXT DEMO VIDEO",
+          "title": "No screen recorder.",
+          "accent": "No",
+          "sub": "Your repo is the script.",
+          "say": "Your next demo video needs no screen recorder.",
+          "breath": 0.4
+        },
+        "turn": {
+          "say": "Enter trailer. Point it at your repo, and it makes the film."
+        },
+        "read": {
+          "say": "It reads your code, picks a story format, and writes the script.",
+          "side": {
+            "eyebrow": "SPLIT 1  READ",
+            "title": "Reads it. Never runs it.",
+            "accent": "Never",
+            "points": [
+              {
+                "text": "README, routes, seed data",
+                "at": "reads"
+              },
+              {
+                "text": "1 format of 20",
+                "at": "format"
+              }
+            ]
+          },
+          "elements": [
+            {
+              "type": "code",
+              "id": "term",
+              "lines": [
+                {
+                  "text": "> /trailer:new",
+                  "at": 0
+                },
+                {
+                  "text": "  Reading the repo",
+                  "at": "reads"
+                },
+                {
+                  "text": "  Wrote brief.md",
+                  "at": "reads"
+                },
+                {
+                  "text": "  Picked F18 Speedrun",
+                  "at": "format"
+                },
+                {
+                  "text": "  Wrote script.md",
+                  "at": "script"
+                }
+              ],
+              "highlight": [
+                4
+              ]
+            }
+          ],
+          "camera": [
+            {
+              "at": "picks",
+              "focus": "term.line3",
+              "zoom": 1.3
+            },
+            {
+              "at": "-0.4s",
+              "reset": true
+            }
+          ],
+          "highlight": [
+            {
+              "at": "format",
+              "target": "term.line3"
+            }
+          ],
+          "notes": [
+            {
+              "at": "format",
+              "target": "term.line3",
+              "text": "fits the problem",
+              "side": "bottom"
+            }
+          ]
+        },
+        "review": {
+          "say": "Then it narrates, captions, renders locally, reviews its own frames, and fixes what it finds."
+        },
+        "proof": {
+          "say": "This film? trailer made it, from its own repo.",
+          "breath": 0.5,
+          "teams": [
+            {
+              "label": "STORY FORMATS",
+              "value": 20,
+              "from": 0,
+              "at": "film"
+            },
+            {
+              "label": "SKILLS",
+              "value": 5,
+              "from": 0,
+              "at": "made"
+            },
+            {
+              "label": "ASPECTS",
+              "value": 3,
+              "from": 0,
+              "at": "trailer"
+            }
+          ],
+          "lowerThird": {
+            "title": "Directed by a config",
+            "sub": "in this repo",
+            "at": "made"
+          }
+        },
+        "end": {
+          "say": "trailer. Open source on GitHub.",
+          "loop": true
+        }
+      }
+    }
+  }
+}

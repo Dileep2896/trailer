@@ -123,6 +123,7 @@ MIT, used under those licenses) and fonts from Google Fonts (below):
 
 - `docs/media/driftcheck-16x9.gif`
 - `docs/media/driftcheck-9x16.gif`
+- `docs/media/trailer-16x9.gif`, `docs/media/trailer-9x16.gif` and `docs/media/trailer-poster.jpg` (the showcase film in `.trailer/`)
 - `docs/media/driftcheck-poster.jpg`
 - `examples/driftcheck/.trailer/assets/drift.png` (a capture of the example app's own page)
 

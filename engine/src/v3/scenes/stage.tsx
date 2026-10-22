@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { AbsoluteFill, Easing, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { cueFrame, spreadCues } from '../../cues.mjs';
+import { splitPanelsWide } from '../../split.mjs';
 import { alpha, hash, mixHex, useTrailer, usePal, useTheme } from '../../theme';
 import { CastLayer, Character, type CastMember } from '../Character';
 import { AppWindow, type UISpec } from '../appui';
@@ -433,14 +434,14 @@ export const Split: React.FC<S> = ({ s, t }) => {
   const vs = (s.divider ?? 'vs') === 'vs' && !ba;
   if (A.wide) {
     const div = ba ? A.W - (A.W / 2) * rIn : A.W / 2;
-    const half = A.W / 2;
+    const panes = splitPanelsWide(A.fr, A.top, A.bottom);
     return (
       <>
         <AbsoluteFill style={{ clipPath: ba ? `inset(0 ${A.W - div}px 0 0)` : undefined, translate: ba ? undefined : `${(1 - lIn) * -200}px 0`, opacity: (ba ? 1 : lIn) * dim(s.left) }}>
-          <Panel p={s.left ?? {}} t={t} r={{ x: 0, y: A.top, w: half, h: A.bottom - A.top }} bg={{ x: 0, y: 0, w: half, h: A.H }} at={lAt} second={false} compact={false} />
+          <Panel p={s.left ?? {}} t={t} r={panes.left.r} bg={panes.left.bg} at={lAt} second={false} compact={false} />
         </AbsoluteFill>
         <AbsoluteFill style={{ clipPath: ba ? `inset(0 0 0 ${div}px)` : undefined, translate: ba ? undefined : `${(1 - rFade) * 200}px 0`, opacity: (ba ? (rIn > 0 ? 1 : 0) : rFade) * dim(s.right) }}>
-          <Panel p={s.right ?? {}} t={t} r={{ x: half, y: A.top, w: half, h: A.bottom - A.top }} bg={{ x: half, y: 0, w: half, h: A.H }} at={rAt} second compact={false} />
+          <Panel p={s.right ?? {}} t={t} r={panes.right.r} bg={panes.right.bg} at={rAt} second compact={false} />
         </AbsoluteFill>
         <div style={{ position: 'absolute', left: div - 3, top: 0, width: 6, height: A.H * (ba ? 1 : lineK), background: P.ink, opacity: 0.85, zIndex: 30 }} />
         {vs && (
