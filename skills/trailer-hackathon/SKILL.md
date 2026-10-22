@@ -131,9 +131,11 @@ The minute marks are the default budget. [timebox.md](references/timebox.md) has
    for reference). Its scene ids, such as the `demo-` act, are the ones the steps below
    refer to. Check that the demo scene ids start with `demo-`; if they do not, rename them
    now. Never replace a config that already holds a film.
-3. If doctor reports `voice.key: "absent"`, say once: "The draft will use the system
-   voice. For the final, set DEEPGRAM_API_KEY in your shell, `<dir>/.trailer/.env` or
-   `<dir>/.env`."
+3. If the user chose no narration at intake, set `"voice": { "provider": "text" }` and skip
+   the key. Otherwise, if doctor reports `voice.key: "absent"`, say once: "No Deepgram key.
+   For a natural narrator, set DEEPGRAM_API_KEY in your shell, `<dir>/.trailer/.env` or
+   `<dir>/.env`. Without one, a film with no narration (music, sound effects and on-screen
+   text) is free and ready to submit; the system voice is free too but sounds robotic."
    Do not block on it.
 
 ### 1. Inventory (minutes 2 to 12; read, don't run)
@@ -211,7 +213,8 @@ Give the demo scenes ids that start with `demo-` (for example `demo-scan`, `demo
 Step 8 measures the demo share from them.
 
 **Word budget = 1.9 words per second of film, plus or minus 8%** (2.1 per second for a cut,
-or for any film of 30 s or less). Count the words in `say` only. Never speed up the voice to fit; cut words instead.
+or for any film of 30 s or less; 1.5 and 1.65 with no narration, where the lines are read).
+Count the words in `say` only. Never speed up the voice to fit; cut words instead.
 
 | target | words (16:9) | demo act words | 9:16 cut (2.1 per second) |
 | --- | --- | --- | --- |
@@ -262,7 +265,7 @@ for "we") and a cue word that is not in the scene's narration.
 
 ### 6. Layout pass before the voice (minutes 37 to 42)
 
-Run `SR <dir> --stills scenes --voice-engine none --safe-overlay --json`. Open the stills
+Run `SR <dir> --stills scenes --voice-engine none --safe-overlay --json` (`--voice-engine text` for a film with no narration). Open the stills
 listed in `outputs`. Fix overflow, clipped text, captions over a focus target, and empty
 frames. This pass is cheap; do it before spending time on the real voice.
 
@@ -331,7 +334,7 @@ Say plainly what the user still has to do: upload the video, paste the blurb, fi
 | exit 3 (missing dependency) | run `SR doctor --json`, give the user its install line, stop |
 | exit 2 (lint errors) | fix each error in the config, re-lint; never delete a scene just to pass |
 | exit 1 (runtime failure) | read the last 30 lines of stderr; check [troubleshooting.md](../trailer/references/troubleshooting.md); isolate with `--frames 0-150`; retry once |
-| no Deepgram key, or `voice.fallback: true` | deliver with the system voice and say so; for the final, the user adds a key and re-runs step 7, or records their own lines and uses `--keep-voice` |
+| no Deepgram key, or `voice.fallback: true` | deliver with the system voice and say so; for the final, the user adds a key and re-runs step 7, records their own lines and uses `--keep-voice`, or switches to the no-voice text mode (`"voice": { "provider": "text" }`, cut words to its budget) |
 | `words` over budget | cut words from acts 1, 4 and 5 first, never from the demo; never raise `voice.speed` above 1.05 |
 | `seconds` more than 5 s off target | adjust words first, then `breath` and `hold`; `fitSeconds` only trims slack |
 | the app will not start for a capture | drop the proof-of-life `screenshot`, use `--skip-capture` or a screenshot already in the repo; the recreated UI carries the demo |

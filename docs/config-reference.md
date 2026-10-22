@@ -100,6 +100,11 @@ scene at 9:16 or 1:1 that has positions and no variant for that aspect. See
 - The narrator reads about 2.2 words a second at a natural pace. The word budget is 1.9 words
   per second of `targetSeconds` for a film (105 to 123 words for 60 s) and 2.1 for a cut, a
   short or any target of 30 s or less (58 to 68 words for 30 s), plus or minus 8%. Never speed the voice up to fit: cut words, or set `fitSeconds`.
+- With no voice (`"voice": { "provider": "text" }`) lines are timed for reading: 2.2 words a
+  second plus 0.7 s per line, 0.3 s per sentence break and 0.1 s per comma, colon or
+  semicolon, at least 1.5 s a line, and a default gap of 15 frames (0.5 s) between lines. The
+  budget is 1.5 words per second of film (83 to 97 words for 60 s) and 1.65 for a cut or a
+  target of 30 s or less (46 to 53 words for 30 s), plus or minus 8%.
 - After voicing, the run warns when the film is more than 5 s (3 s at 30 s and under) off
   `targetSeconds`.
 - `turn: true` marks the turn (usually where the project is first named). The music's drums
@@ -566,7 +571,7 @@ weights it has.
 
 | key | values | default | notes |
 | --- | --- | --- | --- |
-| `provider` | `deepgram`, `say`, `none` | `deepgram` | `say` is the macOS voice; `none` is silent (lengths estimated from the words) for layout work and CI |
+| `provider` | `deepgram`, `say`, `none`, `text` | `deepgram` | `say` is the macOS voice (free, robotic); `none` is a silent draft (lengths estimated from the words) for layout work and CI; `text` is the no-voice mode: a finished film with music, sound effects and on-screen text, no API key (see below) |
 | `model` | `aura-2-<name>-<lang>` | `aura-2-hermes-en` | any Deepgram Aura-2 voice, e.g. `aura-2-thalia-en`, `aura-2-apollo-en`, `aura-2-luna-en`, `aura-2-orion-en` |
 | `speed` | 0.9 to 1.1 | `1.0` | pace with pitch kept; above 1.05 warns |
 | `sayVoice` | a macOS voice | `Samantha` | the voice for the `say` fallback |
@@ -581,13 +586,35 @@ silence, with a loud warning and `"fallback": true` in the `--json` summary. A f
 render is a draft, not for publishing. Generated audio is subject to your Deepgram account's
 terms.
 
+### No voice: `"provider": "text"`
+
+A finished film with no narration and no API call: music, sound effects and the script as
+on-screen text. It is a choice, never a fallback: no warning, `"fallback": false` and
+`"mode": "text"` in `--json`, and no key is read.
+
+- Each line is shown as title-style captions: the display face, one phrase at a time (at most
+  5 words in 16:9, 4 in 1:1, 3 in 9:16), sized up to 1.45x `captions.size` to fill the caption
+  band on one line, centred in the band, with no karaoke lighting. Captions are always on
+  (`captions: false` is ignored with a warning); `position`, `style`, `size` and `case` apply.
+  A scene with `"captions": "off"` warns unless it shows its own words.
+- Lines are timed at the reading pace above. A phrase stays up until the next one; the 0.5 s
+  gap between lines is blank. Word cues fire when the phrase with the word appears.
+- The music bed is never ducked and is lifted to carry the film (0.75 instead of 0.42; SFX
+  1.4x), and the SFX play on their cues; `music.volume` and `sfx` scale the mix.
+- A caption phrase that the scene already shows (a `kinetic` beat, the outro's name or
+  tagline) is not burned in a second time; the `.srt` and `.vtt` keep it.
+- `.srt` and `.vtt` hold the on-screen phrases. 16:9, 9:16 and 1:1, `loop` and `firstFrame`
+  all work as with a voice.
+- `--voice-engine text` (or `TRAILER_VOICE_ENGINE=text`) turns it on for one render;
+  `--voice-engine none` on a text config makes a silent draft at speech pace instead.
+
 Your own recordings: put `line-1.wav`, `line-2.wav`, ... in `.trailer/voice/` (one per line,
 in render order) and pass `--keep-voice`. They are trimmed and loudness-matched, and the
 film is cut to their lengths.
 
 ## Captions (`captions`)
 
-On by default. Words light up as they are spoken (karaoke), in short chunks of up to
+On by default (always on in the text mode, where they are the script). Words light up as they are spoken (karaoke), in short chunks of up to
 `maxWords` that break at punctuation and never strand one word. `false` turns them off. Scene
 layouts keep the caption band clear.
 

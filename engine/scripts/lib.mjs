@@ -9,11 +9,12 @@ import { dirname, isAbsolute, relative, resolve } from 'node:path';
 import { FPS, SCENE_TYPES, sceneId, settledStart } from '../src/timeline.mjs';
 import { ASPECTS, V3_TYPES, aspectSlug, normalizeConfig } from '../src/config.mjs';
 import {
-  resolveCaptions,
+  isTextMode, resolveCaptions,
   BACKGROUNDS, CAMERAS, CAPTION_POSITIONS, CAPTION_STYLES, CHROMES, DEFAULT_VOICE, FONT_NAMES, FONT_ROLES, MOODS, MOTIFS, MOTIONS, PRESETS,
   SCENE_CAPTIONS, SFX_NAMES, SURFACES, TRANSITIONS, TYPES, UI_ELEMENTS, USE_CASES, VOICE_MODEL, VOICE_PROVIDERS, isHex,
 } from '../src/options.mjs';
 import { ENGINE } from './runtime.mjs';
+import { sceneStrings } from '../src/copy.mjs';
 
 export const PUBLIC = resolve(ENGINE, 'public');
 export const CONFIG_NAME = 'trailer.config.json';
@@ -196,6 +197,20 @@ export const validate = (c, raw = c) => {
   const vo = typeof v === 'object' && v ? v : typeof v === 'string' ? { model: v } : {};
   if (vo.provider && !VOICE_PROVIDERS.includes(vo.provider)) err(`voice.provider must be one of ${VOICE_PROVIDERS.join(', ')}`);
   if (vo.model && !VOICE_MODEL.test(vo.model)) err(`voice.model "${vo.model}" is not a Deepgram Aura-2 model name (aura-2-<name>-<lang>, e.g. ${DEFAULT_VOICE.model})`);
+  if (isTextMode(c)) {
+    // The text mode: the captions are the script, so nothing may hide them.
+    if (c.captions === false || (c.captions && typeof c.captions === 'object' && c.captions.enabled === false)) warn('captions are off, but voice.provider "text" shows the script as captions; they are turned back on (remove captions: false)');
+    // A scene with captions "off" must show its own lines (a kinetic beat, a title), or they are never seen.
+    const words = (t) => String(t).toLowerCase().split(/\s+/).map((w) => w.replace(/[^\p{L}\p{N}%$]/gu, '')).filter(Boolean);
+    for (const s of c.scenes) {
+      if (s.captions !== 'off') continue;
+      const shown = [];
+      sceneStrings('', { ...s, say: undefined }, '', (_, t) => shown.push(...words(t)));
+      const have = new Set(shown);
+      const hidden = (c.lines ?? []).filter((l) => l.scene === sceneId(s) && !words(l.text).every((w) => have.has(w)));
+      if (hidden.length) warn(`scene "${sceneId(s)}": captions "off" hides ${hidden.length === 1 ? `"${hidden[0].text}"` : `${hidden.length} lines`}, and with voice.provider "text" nothing else says ${hidden.length === 1 ? 'it' : 'them'}; drop "captions": "off" or show the words in the scene`);
+    }
+  }
   if (vo.speed !== undefined && !(vo.speed >= 0.9 && vo.speed <= 1.1)) err('voice.speed must be 0.9 to 1.1 (cut words instead of speeding the voice up)');
   else if (vo.speed > 1.05) warn(`voice.speed ${vo.speed} is above 1.05; the voice starts to sound hurried`);
   if (c.music && typeof c.music === 'object') {
@@ -255,9 +270,16 @@ export const countWords = (text) => String(text).split(/\s+/).filter((w) => /[\p
 
 export const spokenWords = (c) => (c.lines ?? []).reduce((n, l) => n + countWords(l.text), 0);
 
-/** Words a render of c.targetSeconds wants: 1.9 a second for a film, 2.1 for a cut or a short; +-8%. */
+/**
+ * Words a render of c.targetSeconds wants: 1.9 a second for a film, 2.1 for a cut or a short;
+ * +-8%. In the text mode (voice.provider "text") the words are read, not heard, at the reading
+ * pace in src/timeline.mjs (READING): 1.5 a second for a film, 1.65 for a cut or a short, about
+ * four fifths of a narrated film's words.
+ */
+export const WORD_RATES = { speech: { film: 1.9, short: 2.1 }, reading: { film: 1.5, short: 1.65 } };
 export const wordBudget = (c) => {
-  const rate = c.cut || (c.targetSeconds ?? 60) <= 30 ? 2.1 : 1.9;
+  const r = isTextMode(c) ? WORD_RATES.reading : WORD_RATES.speech;
+  const rate = c.cut || (c.targetSeconds ?? 60) <= 30 ? r.short : r.film;
   const mid = rate * (c.targetSeconds ?? 60);
   return [Math.round(mid * 0.92), Math.round(mid * 1.08)];
 };
@@ -272,28 +294,6 @@ export const durationWindow = (c) => {
 /* ------------------------------------------------------------------ copy lint */
 
 export const FIRST_PERSON = /\b(I|I'm|I've|I'll|I'd|we|we're|we've|we'll|our|ours|my|mine|me|us)\b/i;
-
-// Keys whose strings are settings, not copy (never shown or spoken as text).
-const NOT_COPY = new Set(['type', 'id', 'who', 'mood', 'pose', 'page', 'image', 'src', 'color', 'tone', 'kind', 'style', 'layout', 'icon', 'emoji', 'transition', 'target', 'focus', 'to', 'shape', 'at', 'until', 'frame', 'chrome', 'bg', 'background', 'font', 'fonts', 'lang', 'op', 'sfx', 'enter', 'exit', 'fx', 'accessory', 'side', 'align', 'from', 'lane', 'mode', 'stage', 'position', 'captions', 'perspective', 'say', 'accent', 'swapFx', 'word', 'edge', 'tilt', 'path', 'variant', 'size', 'dir', 'when', 'react', 'provider', 'model', 'sayVoice', 'url', 'name']);
-
-const sceneStrings = (id, node, path, add, quoted = false) => {
-  if (typeof node === 'string') {
-    add(`${id}${path}`, node, quoted);
-    return;
-  }
-  if (Array.isArray(node)) {
-    node.forEach((v, i) => sceneStrings(id, v, `${path}[${i}]`, add, quoted));
-    return;
-  }
-  if (node && typeof node === 'object') {
-    // Attributed quotes (evidence cards with a source) and in-world chat are dialogue, not narration.
-    const q = quoted || (node.source !== undefined && (node.kind === 'quote' || node.kind === 'post' || node.kind === 'thread')) || node.quoted === true;
-    for (const [k, v] of Object.entries(node)) {
-      if (k.startsWith('_') || NOT_COPY.has(k)) continue;
-      sceneStrings(id, v, `${path}.${k}`, add, q || k === 'messages' || k === 'bubble');
-    }
-  }
-};
 
 /** Every string the video shows or says, with where it comes from. */
 export const copyStrings = (c) => {
@@ -437,7 +437,7 @@ export const lintFormat = (c, { captionChunks = [], tl = null } = {}) => {
     const l0 = tl?.lines?.[0];
     if (l0) {
       const startSec = (l0.from + (l0.words?.[0]?.start ?? 0) * FPS) / FPS;
-      if (startSec > 1) w(`the first word is spoken at ${startSec.toFixed(1)} s; the hook of a short should start within 1 s (lower scene 1's "lead", or cut what comes before the first line)`);
+      if (startSec > 1) w(`the first word is ${isTextMode(c) ? 'on screen' : 'spoken'} at ${startSec.toFixed(1)} s; the hook of a short should start within 1 s (lower scene 1's "lead", or cut what comes before the first line)`);
     }
     // Frame 0 is the thumbnail and what a muted autoplay shows first.
     if (first && !settledStart(c)) w(`frame 0 is blank: scene 1 starts empty${first.firstFrame === 'live' ? ' (firstFrame "live")' : ''}; a short should show its hook on frame 0 (drop firstFrame "live", or set "firstFrame": "settled" or "loop": true on the last scene)`);
@@ -528,10 +528,27 @@ export const envKeySource = (key, p) => {
 
 export const envKey = (key, p) => envKeySource(key, p).value;
 
+/** The provider a render is forced to: --voice-engine, else TRAILER_VOICE_ENGINE, else null. */
+export const voiceEngineOverride = ({ engine } = {}) => engine ?? process.env.TRAILER_VOICE_ENGINE ?? null;
+
+/**
+ * The config with the render's voice provider written into it (config.voice.provider), so the
+ * timeline, the captions and the lint see the text mode whether it came from the config, the
+ * environment or --voice-engine. Returns the same object when nothing changes.
+ */
+export const withVoiceEngine = (c, opts = {}) => {
+  const engine = voiceEngineOverride(opts);
+  if (!engine) return c;
+  const v = c.voice;
+  const o = typeof v === 'string' ? { model: v } : v && typeof v === 'object' ? v : {};
+  if (o.provider === engine) return c;
+  return { ...c, voice: { ...o, provider: engine } };
+};
+
 /**
  * The voice settings for a render: config.voice (a model name or an object) over the default
  * (Deepgram aura-2-hermes-en at 1.0), then TRAILER_VOICE (model) and TRAILER_VOICE_ENGINE
- * (provider) from the environment, then --voice-engine.
+ * (provider) from the environment, then --voice-engine. Provider "text" is the no-voice mode.
  */
 export const resolveVoice = (c, { engine } = {}) => {
   const v = c.voice;

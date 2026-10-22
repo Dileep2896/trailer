@@ -114,9 +114,14 @@ synthesized at that bpm (the beat grid also rounds scene lengths); the drums ent
 
 ## Voice (`voice`)
 
-`"aura-2-hermes-en"` or `{ provider: "deepgram" | "say" | "none", model, speed, sayVoice }`.
+`"aura-2-hermes-en"` or `{ provider: "deepgram" | "say" | "none" | "text", model, speed, sayVoice }`.
 Default Deepgram `aura-2-hermes-en` at `speed: 1.0`; speed 0.9 to 1.1, warning above 1.05.
-Environment overrides: `TRAILER_VOICE`, `TRAILER_VOICE_ENGINE`. See `voice.md`.
+`{ "provider": "text" }` is the no-voice mode: no narration and no API key; every line is shown
+as title-style on-screen text at a reading pace (2.2 words a second, 0.7 s per line, at least
+1.5 s, 0.5 s between lines), the music is never ducked and the SFX still fire. Captions are
+forced on, in the display face, at most 5 words a phrase (4 in 1:1, 3 in 9:16), and the word
+budget drops to 1.5 a second (1.65 for cuts and 30 s films). `none` is only the silent layout
+draft. Environment overrides: `TRAILER_VOICE`, `TRAILER_VOICE_ENGINE`. See `voice.md`.
 
 ## Capture (`capture`): live screenshots (optional)
 

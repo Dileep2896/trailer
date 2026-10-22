@@ -123,8 +123,12 @@ Below, `ENGINE` stands for that prefix.
    `ENGINE init <projectDir> --use-case jobhunt`. It writes the jobhunt starter config
    (`assets/jobhunt.config.json` is the same file, kept here for reference); treat every line
    of it as placeholder. Confirm that `.trailer/.gitignore` lists `private/`. Create
-   `.trailer/private/outreach/`. If `doctor` reports `voice.key: "absent"`, say once that the draft
-   will use the system voice and how to add a key (see voice.md), then carry on.
+   `.trailer/private/outreach/`. If the user chose no narration at intake, set
+   `"voice": { "provider": "text" }` and skip the key. Otherwise, if `doctor` reports
+   `voice.key: "absent"`, say once how to add a key (see voice.md) and that without one the
+   free choices are no narration (a finished film: music, sound effects and on-screen text;
+   the better pick for a film a founder will watch) or the robotic system voice (drafts), then
+   carry on.
 2. **Target research** ([references/target-research.md](references/target-research.md)).
    Gather from public sources only: what the target makes, for whom, the specific problem the
    build addresses, 1 to 3 pieces of evidence (URL, date, exact wording), their stack, and the
@@ -270,7 +274,7 @@ Fix the config, then re-render. After 3 loops, stop and report what is still ope
 | lint exit 2: banned term | rewrite the line at the domain level and lint again. Never weaken `banned-terms.txt` |
 | lint exit 2: first person while `person` is `third` | rewrite in third person with the project name. Don't switch `person` to silence it |
 | exit 3: missing dependency | run `ENGINE doctor`, then report its exact fix command. Don't install system packages yourself |
-| `voice.fallback: true` | finish the render, warn at delivery, and offer to re-render once a key is set |
+| `voice.fallback: true` | finish the render, warn at delivery, and offer to re-render once a key is set, or in the no-voice text mode (`"voice": { "provider": "text" }`) |
 | duration more than 5 s off target | cut or add words to match the budget, and adjust `fitSeconds`. Never change the speed |
 | the user asks you to send, post or schedule | decline. Point to the draft files and say that sending is up to them |
 | the user wants a first-person film | set `narration.person: "first"`. Suggest recording the lines themselves (voice.md, `--keep-voice`), because a personal film sounds best in their own voice |

@@ -115,7 +115,8 @@ failure, `2` lint errors, `3` missing dependency.
 4. **Built for muted autoplay.** Captions are burned in, `center-low`, 64 to 72 px, 3 words
    a chunk. The picture has to explain itself with the sound off.
 5. **Denser pace, never a faster voice.** The word budget is 2.1 words a second of film,
-   give or take 8%. If the line count is over, cut words. Never raise `voice.speed` to fit.
+   give or take 8% (1.65 with no narration, where the lines are read: 3-word phrases, short
+   lines). If the line count is over, cut words. Never raise `voice.speed` to fit.
 6. **Nothing important in the platform chrome.** The 9:16 safe box is 1080 x 1920 minus
    220 px top, 420 px bottom, 64 px left and 136 px right. Captions, UI focus targets and
    characters all stay inside it.
@@ -177,9 +178,13 @@ plus or minus 3 s.
    platform. Follow the chosen tier's column from then on.
 1. Run `<engine> doctor <projectDir> --json`. Exit 3 means a missing dependency: show the user the exact
    install hint from the output and stop. Do not install system packages yourself.
-2. If `doctor` reports `voice.key: "absent"`, say once that this draft will use the free
-   `voice.fallback` voice, and that a key in the environment, `.trailer/.env` or `.env`
-   gives the natural narrator. Do not block on it, and never print or write a key.
+2. If the user chose no narration at intake (or the film's config has `"voice": { "provider":
+   "text" }`), skip the key: the short uses the text mode (music, sound effects and on-screen
+   text, which also suits muted autoplay). Otherwise, if `doctor` reports `voice.key:
+   "absent"`, say once that a key in the environment, `.trailer/.env` or `.env` gives the
+   natural narrator, and that without one the free choices are no narration (recommended for
+   a short that will be posted) or the robotic `voice.fallback` voice (drafts). Do not block
+   on it, and never print or write a key.
 3. Read `.trailer/trailer.config.json`, `.trailer/script.md` and `.trailer/brief.md` if
    they exist. Choose path A or B with the table above. Tell the user which one in one line.
 
@@ -308,6 +313,7 @@ Any other warning is fixed or justified in one line in `script.md`.
 ```sh
 <engine> <projectDir> --cut short --stills scenes --voice-engine none --safe-overlay --json
 <engine> <projectDir> --cut square --stills scenes --voice-engine none --safe-overlay --json
+# a film with no narration: --voice-engine text instead of none
 ```
 
 Read every still with the Read tool. Check it against the layout section of
@@ -378,7 +384,7 @@ The user posts.
 | exit 3 (missing dependency) | show `doctor`'s install hint verbatim and stop |
 | exit 2 (lint errors) | fix each error by its scene id; the common ones are first person, a banned term, a cue that names no spoken word, an unknown scene id in `cuts.*.scenes` |
 | exit 1 (runtime failure) | read the last 40 lines of stderr, then `troubleshooting.md`; rerun once with `--voice-engine none` to tell voice problems from render problems |
-| voice fell back to `say` or silent | keep going; warn in the delivery; a Deepgram 403 usually means a mistyped `aura-2-*` model name |
+| voice fell back to `say` or silent | keep going; warn in the delivery, and offer the no-voice text mode for a finished short without a key; a Deepgram 403 usually means a mistyped `aura-2-*` model name |
 | over budget or over time | cut words in the overrides, then drop the weakest scene; `fitSeconds` only trims slack, it never shortens the voice |
 | under 15 s | add a held beat on the proof (`hold`), not filler words |
 | a click or note lands on the wrong word | the cue word is missing from the rewritten `say`; put it back or recue |

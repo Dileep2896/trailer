@@ -8,6 +8,11 @@
 // the binary missing) the next one in deepgram -> say -> espeak-ng -> none takes over, with a
 // loud warning and `fallback: true` in the result.
 //
+// text is not a voice and not in that chain: it is the no-voice mode a user chooses for a
+// finished film without narration (music, sound effects and on-screen text). It makes no
+// network call and runs no speech engine; each line lasts its reading time (READING in
+// src/timeline.mjs) and the timeline shows it as on-screen text.
+//
 // With Deepgram, each finished line goes to speech-to-text (nova-3) for word timestamps,
 // aligned to the script's own words; they drive the karaoke captions. Otherwise words are
 // timed in proportion to their length.
@@ -25,7 +30,7 @@ import { platform } from 'node:os';
 import { resolve } from 'node:path';
 import { durationOf, ffmpeg } from './runtime.mjs';
 import { envKey } from './lib.mjs';
-import { estimateLineSeconds } from '../src/timeline.mjs';
+import { READING, estimateLineSeconds, estimateReadSeconds } from '../src/timeline.mjs';
 
 const TRIM = 'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse';
 const NORM = 'loudnorm=I=-16:TP=-1.5:LRA=7';
@@ -167,12 +172,26 @@ const speak = {
   },
 };
 
+/** Said when a render falls all the way to a silent draft: the finished, voiceless option. */
+export const TEXT_HINT = 'For a finished film without a voice (music, sound effects and on-screen text; free, no API key) set "voice": { "provider": "text" } or pass --voice-engine text.';
+
+/** The no-voice mode: no audio, no API; each line lasts its reading time. */
+const textLines = (lines, log) => {
+  log(`voice: none (text mode): lines shown as on-screen text at ${READING.wordsPerSecond} words/s, at least ${READING.min} s each`);
+  const out = lines.map((l) => ({ src: null, seconds: estimateReadSeconds(l.text), words: null }));
+  for (const [i, l] of out.entries()) log(`  line ${String(i + 1).padStart(2)}  ${l.seconds.toFixed(2)} s  ${lines[i].scene.padEnd(12)} "${lines[i].text}"`);
+  const total = out.reduce((s, l) => s + l.seconds, 0);
+  log(`reading total ${total.toFixed(1)} s`);
+  return { engine: 'text', provider: 'text', model: null, speed: 1, fallback: false, mode: 'text', captions: { stt: 0, proportional: 0, reading: out.length }, seconds: +total.toFixed(2), lines: out };
+};
+
 /**
  * Voice the render's lines. Returns { engine, provider, model, speed, fallback, captions, lines }
  * where lines[i] = { src: 'vo/<file>.wav' | null, seconds, words }.
  */
 export const voice = async (p, { dir, keep = false, settings, log = (m) => console.error(m), warn = (m) => console.error(`warning: ${m}`) }) => {
   const { lines } = p.config;
+  if (settings.provider === 'text') return textLines(lines, log);
   mkdirSync(p.voice, { recursive: true });
   const key = envKey('DEEPGRAM_API_KEY', p);
   const local = localEngines();
@@ -184,11 +203,11 @@ export const voice = async (p, { dir, keep = false, settings, log = (m) => conso
     at += 1;
     provider = steps[at] ?? 'none';
     fallback = true;
-    warn(`!!! VOICE FALLBACK: ${why}; voicing with "${provider}" instead${provider === 'none' ? ' (silent: lengths estimated from the words)' : ''}. Not for publishing.`);
+    warn(`!!! VOICE FALLBACK: ${why}; voicing with "${provider}" instead${provider === 'none' ? ' (a silent draft: lengths estimated from the words)' : ''}. Not for publishing.${provider === 'none' ? ` ${TEXT_HINT}` : ''}`);
   };
   if (provider !== settings.provider) {
     fallback = true;
-    warn(`!!! VOICE FALLBACK: "${settings.provider}" is not available on this machine; voicing with "${provider}" instead. Not for publishing.`);
+    warn(`!!! VOICE FALLBACK: "${settings.provider}" is not available on this machine; voicing with "${provider}" instead. Not for publishing.${provider === 'none' ? ` ${TEXT_HINT}` : ''}`);
   }
   if (provider === 'deepgram' && !key) fall('DEEPGRAM_API_KEY is not set (environment, .trailer/.env or .env)');
   const tempoFor = () => {
@@ -273,5 +292,5 @@ export const voice = async (p, { dir, keep = false, settings, log = (m) => conso
   for (const [i, l] of out.entries()) log(`  line ${String(i + 1).padStart(2)}  ${l.seconds.toFixed(2)} s  ${lines[i].scene.padEnd(12)} "${lines[i].text}"`);
   const total = out.reduce((s, l) => s + l.seconds, 0);
   log(`voice total ${total.toFixed(1)} s; caption words timed by speech-to-text on ${timedBy.stt} line(s), by length on ${timedBy.proportional}`);
-  return { engine: ident(), provider, model: settings.model, speed: settings.speed, fallback, captions: timedBy, seconds: +total.toFixed(2), lines: out };
+  return { engine: ident(), provider, model: settings.model, speed: settings.speed, fallback, mode: provider === 'none' ? 'silent-draft' : 'narration', captions: timedBy, seconds: +total.toFixed(2), lines: out };
 };

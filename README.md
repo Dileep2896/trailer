@@ -67,8 +67,11 @@ music, sound effects, `.srt`/`.vtt` captions, a poster and a GIF.
 - **Narration drives the picture.** Every element is cued to a spoken word (`"at": "flagged"`).
   Word timings come from speech-to-text, so a different voice, a fallback or your own
   recording still lines up.
-- **One natural narrator.** Deepgram Aura-2 (`aura-2-hermes-en` by default) with a free
-  fallback to macOS `say`, Linux `espeak-ng`, or a silent draft timed by word count.
+- **One natural narrator, or none.** Deepgram Aura-2 (`aura-2-hermes-en` by default) with a
+  free fallback to macOS `say`, Linux `espeak-ng`, or a silent draft timed by word count.
+- **A no-voice mode, free and finished.** `"voice": { "provider": "text" }` makes a film with
+  no narration and no API key: music, sound effects and the script as on-screen titles, paced
+  for reading, with the same cues, `.srt` and `.vtt`.
 - **Three aspects from one config.** 16:9 (1920x1080), 9:16 (1080x1920) and 1:1 (1080x1080),
   with platform safe areas, portrait layouts per scene type, and `cuts` that reuse the film's
   voiced lines.
@@ -183,7 +186,7 @@ and later renders reuse it. Before `install` has run, `doctor` reports the engin
 macOS and Linux are supported. `node engine/trailer.mjs doctor` reports everything in one table
 (`--json` for a machine-readable version).
 
-## Voice: Deepgram, or free
+## Voice: Deepgram, system voice, or no voice
 
 Trailer narrates with Deepgram's Aura-2 text-to-speech (`aura-2-hermes-en` at speed 1.0 by
 default) and times every word with Deepgram's speech-to-text. To use it, create a key in your
@@ -201,10 +204,27 @@ The key is never logged, echoed or written into props, caches or outputs.
 `node engine/trailer.mjs doctor your-app` reports only `present` or `absent` and which of the
 three places it came from (`--json`: `voice.key`, `voice.source`). [`.env.example`](.env.example) lists every variable.
 
-**No key? It still works.** Without one, the engine falls back to macOS `say`, then
-`espeak-ng` on Linux, then a silent draft timed by word count, and it warns loudly each time.
-The `--json` summary sets `voice.fallback: true` so the skills tell you. Force a path with
-`--voice-engine deepgram|say|none`. To narrate it yourself, record `.trailer/voice/line-N.wav`
+**No key? Two free options.**
+
+| | how | sounds like | for |
+| --- | --- | --- | --- |
+| **No voice** | `"voice": { "provider": "text" }` or `--voice-engine text` | music and sound effects; the script appears as on-screen titles | a finished film you can publish, with no API key |
+| **System voice** | automatic without a key: macOS `say`, else `espeak-ng` on Linux | robotic | drafts: checking timing and layout |
+
+In the **no-voice (text) mode** nothing is synthesized and nothing is sent anywhere. Each line
+becomes title-style text (the display face, one short phrase at a time, centred in the
+caption band) and lasts as long as it takes to read: 2.2 words a second, plus 0.7 s per line
+to notice it, at least 1.5 s per line and a 0.5 s beat between lines. The music stays up for
+the whole film (nothing to duck under), the sound effects still land on their cues, and word
+cues fire when their word comes on screen. Because reading is slower than listening, the word
+budget drops to 1.5 words a second of film (about 90 words for 60 s). `--json` reports
+`voice.mode: "text"` and `voice.fallback: false`: it is a choice, not a fallback.
+
+Without a key and without the text mode, the engine falls back to macOS `say`, then
+`espeak-ng` on Linux, then a silent draft timed by word count, and it warns loudly each time
+(the silent-draft warning points you at the text mode). The `--json` summary sets
+`voice.fallback: true` so the skills tell you. Force a path with
+`--voice-engine deepgram|say|none|text`. To narrate it yourself, record `.trailer/voice/line-N.wav`
 per line and render with `--keep-voice`.
 
 Audio you generate through Deepgram is subject to your own Deepgram account's terms.
@@ -267,7 +287,7 @@ No skill ever uploads, posts or sends anything. You do that.
  README, routes,     read    ┌──────────────────────────┐   writes    ┌──────────────────────────────────┐
  components, theme  ───────► │ 1 inventory -> brief.md   │  ───────►  │ lint     schema, copy, word budget│
  files, seed data,           │ 2 tokens + components     │  .trailer/ │ capture  screenshots (optional)  │
- tests, CHANGELOG,           │ 3 pick a format (F01-F20) │  trailer.  │ voice    Deepgram / say / none   │
+ tests, CHANGELOG,           │ 3 pick a format (F01-F20) │  trailer.  │ voice    Deepgram / say / text   │
  git log                     │ 4 script.md + sources     │  config    │          + word timings          │
                              │ 5 trailer.config.json     │  .json     │ timeline beat grid, fitted       │
                              │ 6 lint, layout stills     │            │ captions .srt / .vtt / burned in │
@@ -354,7 +374,7 @@ trailer schema                          print the path of the config JSON Schema
 trailer install                         install the engine's dependencies now
 
 --config <path>     --aspect 16:9|9:16|1:1     --cut <name>     --all       --lint
---no-render         --voice-engine deepgram|say|none            --keep-voice
+--no-render         --voice-engine deepgram|say|none|text       --keep-voice
 --skip-capture      --stills scenes|cues|<seconds,scene-ids>    --review   --safe-overlay
 --frames a-b        --gif      --studio      --json      -h, --help      -v, --version
 ```
@@ -367,7 +387,7 @@ Run it as `node engine/trailer.mjs ...`. Exit codes: `0` ok, `1` failure, `2` li
 | --- | --- |
 | `DEEPGRAM_API_KEY` | Deepgram key (else `.trailer/.env`, else `<projectDir>/.env`) |
 | `TRAILER_VOICE` | Aura-2 model override (default `aura-2-hermes-en`) |
-| `TRAILER_VOICE_ENGINE` | `deepgram`, `say` or `none` |
+| `TRAILER_VOICE_ENGINE` | `deepgram`, `say`, `none` (a silent draft) or `text` (no voice: on-screen text) |
 | `TRAILER_HOME` | engine runtime, the headless browser (`browser/`, about 570 MB) and caches (default `~/.cache/trailer`; the plugin uses its own data folder) |
 | `REMOTION_BROWSER` | a Chrome or headless-shell executable to render with |
 
@@ -395,9 +415,16 @@ timing. Without one, nothing leaves the machine apart from the one-time installs
 downloads.
 
 **Do I need a Deepgram key?**
-No. Without one you get a draft with the system voice (`say` on macOS, `espeak-ng` on Linux)
-or a silent draft, and everything else works the same. The key is what gets you the natural
-narrator.
+No. Without one you have two free choices: the **no-voice mode** (`"voice": { "provider": "text" }`),
+a finished film with music, sound effects and the script as on-screen titles, or the system
+voice (`say` on macOS, `espeak-ng` on Linux), which is fine for drafts but sounds robotic.
+The key is what gets you the natural narrator.
+
+**Can I make a film with no narration at all?**
+Yes: set `"voice": { "provider": "text" }` (or pass `--voice-engine text`). No API is called.
+Lines are timed for reading instead of speech, so write fewer, shorter lines (the word budget
+and the lint use the reading pace). It works at 16:9, 9:16 and 1:1, with loops and a
+settled first frame.
 
 **Can I use it on a commercial project?**
 trailer's code is MIT. Remotion, which does the rendering, is free for individuals,

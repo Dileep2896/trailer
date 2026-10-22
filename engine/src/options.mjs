@@ -20,10 +20,30 @@ export const CAPTION_STYLES = ['box', 'outline', 'plain', 'pill'];
 export const FONT_ROLES = ['display', 'ui', 'mono'];
 export const ASPECTS = ['16:9', '9:16', '1:1'];
 export const USE_CASES = ['explainer', 'launch', 'jobhunt', 'hackathon', 'shorts'];
-export const VOICE_PROVIDERS = ['deepgram', 'say', 'none'];
+/**
+ * deepgram, say (macOS) and none (a silent draft) narrate or stand in for a narrator; text is
+ * the no-voice mode: no narration at all, each line shown as on-screen text at a reading pace,
+ * music and sound effects only. espeak-ng is reached only as a fallback.
+ */
+export const VOICE_PROVIDERS = ['deepgram', 'say', 'none', 'text'];
 /** Deepgram Aura 2 model names. The list of voices changes, so only the shape is checked. */
 export const VOICE_MODEL = /^aura-2-[a-z]+-[a-z]{2}$/;
 export const DEFAULT_VOICE = { provider: 'deepgram', model: 'aura-2-hermes-en', speed: 1.0, sayVoice: 'Samantha' };
+
+/**
+ * The mix with no voice. A narrated film sits near -17 LUFS because the voice (-16 LUFS) carries
+ * it, with the bed at 0.42 between lines and 0.12 under them. With no voice the bed at 0.42
+ * leaves the film near -24.5 LUFS, so the text mode lifts the bed to 0.75 (+5 dB) and the sound
+ * effects by 1.4x (+3 dB, so they still cut through the louder bed). music.volume and sfx scale
+ * on top.
+ */
+export const TEXT_MIX = { music: 0.75, sfx: 1.4 };
+
+/** The no-voice mode: config.voice is { "provider": "text" } (on the normalized config). */
+export const isTextMode = (config = {}) => {
+  const v = config?.voice;
+  return !!v && typeof v === 'object' && v.provider === 'text';
+};
 
 /* ------------------------------------------------------------------ scene vocabularies */
 
@@ -230,6 +250,17 @@ export const ASPECT_CAPTIONS = {
 };
 
 /**
+ * Caption defaults in the no-voice (text) mode: the captions are the script, so they are set in
+ * the display face, at most one short phrase at a time, sized up to fill the caption band on
+ * one line (Captions.tsx), and shown whole (no karaoke word lighting).
+ */
+export const TEXT_CAPTIONS = {
+  '16:9': { fontRole: 'display', maxWords: 5 },
+  '9:16': { fontRole: 'display', maxWords: 3 },
+  '1:1': { fontRole: 'display', maxWords: 4 },
+};
+
+/**
  * The caption settings for a (normalized) config at its aspect. In 9:16 and 1:1 the size never
  * drops below the aspect's default and a chunk never holds more words than it, so a 16:9
  * caption style still reads on a phone; a cut's own `captions` set exactly what it wants.
@@ -238,7 +269,17 @@ export const resolveCaptions = (config = {}) => {
   const c = config.captions === false ? { enabled: false } : config.captions === true ? {} : (config.captions ?? {});
   const aspect = config.aspect ?? '16:9';
   const per = ASPECT_CAPTIONS[aspect] ?? {};
-  const out = { ...DEFAULT_CAPTIONS, ...(config.kit !== undefined && config.kit < 3 ? { size: 46 } : {}), ...per, ...c };
+  const text = isTextMode(config);
+  const out = { ...DEFAULT_CAPTIONS, ...(config.kit !== undefined && config.kit < 3 ? { size: 46 } : {}), ...per, ...(text ? TEXT_CAPTIONS[aspect] ?? TEXT_CAPTIONS['16:9'] : {}), ...c };
+  // In the text mode the captions carry the whole script: they are always on, set in the
+  // display face (a subtitle face chosen for a voiced film yields to it), and a phrase never
+  // holds more words than the mode's default.
+  if (text) {
+    out.enabled = true;
+    out.fontRole = 'display';
+    out.reading = true;
+    out.maxWords = Math.min(out.maxWords, (TEXT_CAPTIONS[aspect] ?? TEXT_CAPTIONS['16:9']).maxWords);
+  } else out.reading = false;
   if (aspect !== '16:9') {
     // The film's 16:9 caption settings yield to the aspect's defaults, except where a cut sets
     // its own captions.

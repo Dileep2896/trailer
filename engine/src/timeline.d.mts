@@ -14,3 +14,8 @@ export function settleFrame(scene: TimelineScene): number;
 export const LOOP_FADE: number;
 export function settledFrameAt(f: number, settle: number): number;
 export function settledStart(config: TrailerConfig): boolean;
+export const READING: { wordsPerSecond: number; perLine: number; perSentence: number; perClause: number; min: number; gap: number };
+export const SPEECH: { wordsPerSecond: number; perLine: number; perSentence: number; perClause: number; min: number };
+export function estimateReadSeconds(text: string): number;
+export function estimateLineSeconds(text: string, speed?: number): number;
+export function readingWords(text: string, seconds: number, opts?: { maxWords?: number; maxChars?: number }): { w: string; start: number; end: number }[];

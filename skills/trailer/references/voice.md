@@ -1,10 +1,57 @@
-# Voice: narrator, pace and fallbacks
+# Voice: narrator, no voice, pace and fallbacks
 
-Every film has **one narrator**. The engine synthesizes each `say` line, measures it, aligns
-word timestamps for the cues and captions, loudness-matches it, and only re-voices lines whose
-text changed.
+Every film has **one narrator**, or deliberately **none**. With a narrator, the engine
+synthesizes each `say` line, measures it, aligns word timestamps for the cues and captions,
+loudness-matches it, and only re-voices lines whose text changed. With no voice (the text
+mode, below), each `say` line is shown as on-screen text instead, timed for reading.
 
-## The chain
+## The choices
+
+| choice | `voice.provider` | needs | cost | result |
+| --- | --- | --- | --- | --- |
+| natural narrator | `deepgram` (default) | `DEEPGRAM_API_KEY` | Deepgram credit | a finished, narrated film |
+| no voice | `text` | nothing | free | a **finished** film: music, sound effects and the script as on-screen titles |
+| system voice | `say` (or `espeak-ng` as a fallback) | macOS / the package | free | robotic narration; drafts only |
+| your own recording | any, plus `--keep-voice` | your WAVs | free | a finished, narrated film |
+
+When there is no key, recommend **no voice** for anything that will be published and the
+system voice only for drafts. `none` is not a choice to offer: it is the silent layout draft
+at the end of the fallback chain.
+
+## No voice: the text mode
+
+`"voice": { "provider": "text" }` (or `--voice-engine text`, or `TRAILER_VOICE_ENGINE=text`).
+No speech is synthesized, no API is called, nothing is sent anywhere, and there is no
+fallback warning: `--json` reports `voice.engine: "text"`, `voice.mode: "text"` and
+`voice.fallback: false`.
+
+- **Captions become titles.** Each line is shown one short phrase at a time (at most 5 words
+  in 16:9, 4 in 1:1, 3 in 9:16) in the display face, sized up to fill the caption band on one
+  line and centred in it, with no word-by-word lighting. Captions are always on in this mode;
+  `captions.position`, `style`, `size` and `case` still apply. A scene with `"captions":
+  "off"` must show its own words (a `kinetic` beat, a `title`), or the lint warns.
+- **Reading pace, not speech pace.** Each line lasts 2.2 words a second, plus 0.7 s to notice
+  the new phrase, 0.3 s per sentence break and 0.1 s per comma, at least 1.5 s; lines in a
+  scene are 0.5 s apart (a blank beat, so the next phrase reads as new). The numbers come from
+  subtitle guidance (BBC: 160 to 180 words a minute; Netflix: 17 characters a second for
+  adults, 13 for children), set below them because the text shares the frame with a moving
+  picture. A phrase stays up until the next one replaces it.
+- **Cues still work.** `"at": "flagged"` fires when the phrase holding "flagged" comes on
+  screen; line cues (`"at": 1`) and second cues work as before.
+- **Music stays up.** The bed is never ducked (there is no voice to duck under) and is lifted
+  to carry the film (bed 0.75 instead of 0.42, effects 1.4x), so a text film lands near a
+  narrated film's loudness; the sound effects land on their cues as usual. `music.volume` and
+  `sfx` still scale the levels.
+- **No double text.** A phrase the scene already shows on screen (a `kinetic` beat, the
+  outro's name and tagline) is not burned in again; it stays in the `.srt` and `.vtt`.
+- **The budget is smaller**: 1.5 words per second of film (1.65 for a cut or a 30 s film),
+  about four fifths of a narrated film. See "Writing for reading" in `craft.md`.
+- `.srt` and `.vtt` are still written (the on-screen phrases, with their times), and the mode
+  works at 16:9, 9:16 and 1:1, with `loop` and `firstFrame`.
+- For the layout pass, keep the text mode (`--voice-engine text`, or no flag), not `none`:
+  `none` lays the film out at speech pace with narration-style captions.
+
+## The fallback chain (narration)
 
 | order | engine | needs | quality |
 | --- | --- | --- | --- |
@@ -14,8 +61,11 @@ text changed.
 | 4 | `none` | nothing | a **silent** draft, words timed by length; for layout checks |
 
 Each fallback prints a loud warning and sets `voice.fallback: true` in `--json`. Always tell the
-user when the delivered film used a fallback voice. Force a path with
-`--voice-engine deepgram|say|none` (or `TRAILER_VOICE_ENGINE`).
+user when the delivered film used a fallback voice. When the chain ends at `none` (no key, no
+local voice), the warning recommends the text mode, the finished voiceless option; offer it
+rather than delivering a silent draft. The text mode is never reached by falling back: it
+is only used when chosen. Force a path with `--voice-engine deepgram|say|none|text` (or
+`TRAILER_VOICE_ENGINE`).
 
 ## Setting up Deepgram
 
@@ -63,7 +113,7 @@ current set. An unknown model returns an error from Deepgram and the run falls b
 with a clear message. Use the default unless the user asks; never pick a voice per film just
 for variety. The user can listen to a few and decide.
 
-## Pace and the word budget
+## Pace and the word budget (narration)
 
 - `speed` defaults to **1.0**. Allowed 0.9 to 1.1; the lint warns above 1.05. Pitch is kept.
 - A voice speaks about 2.5 words a second, but a **film** runs at about **1.9 words per second**
@@ -83,7 +133,8 @@ for variety. The user can listen to a few and decide.
 
 ## The `say` fallback
 
-On macOS, `say` is always available and free. Good English voices: `Samantha` (default),
+On macOS, `say` is always available and free, but it sounds robotic: for a film that will be
+published without a key, recommend the text mode instead. Good English voices: `Samantha` (default),
 `Alex`, `Daniel`, `Karen`, `Moira`. Set `sayVoice`. Higher-quality "Premium"/"Enhanced" voices
 can be downloaded in System Settings > Accessibility > Spoken Content. A `say` draft is fine for
 checking timing and layout; recommend Deepgram (or the user's own recording) for the final.

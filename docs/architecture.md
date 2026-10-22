@@ -13,7 +13,8 @@ page covers the engine.
         |
   capture ------> .trailer/shots/<page>.png + boxes      (image, static serve, or live app)
         |
-  voice --------> .trailer/voice/<hash>.wav + word timings (Deepgram, say, espeak-ng, none)
+  voice --------> .trailer/voice/<hash>.wav + word timings (Deepgram, say, espeak-ng, none),
+                  or reading times with no audio (text: the no-voice mode)
         |
   timeline -----> scene starts and lengths on the music's beat grid, fitted to the voice
         |
@@ -62,6 +63,13 @@ text, so cuts reuse the film's lines and only changed lines are re-voiced. With 
 each line goes through speech-to-text (nova-3) and the recognised words are aligned to the
 script by edit distance; the captions and cues use the script's words with the recogniser's
 timing. The fallback chain is deepgram, say, espeak-ng, none.
+
+`provider: "text"` is the no-voice mode and sits outside that chain: `voice.mjs` makes no
+call and returns each line's reading time (`READING` and `estimateReadSeconds` in
+`src/timeline.mjs`). The timeline gives each line the phrase timings the captions show
+(`readingWords`, grouped by `src/phrases.mjs`, the same grouping `captions.mjs` uses), the
+captions render those phrases as titles, and `Trailer.tsx` leaves the music bed unducked
+because no line has audio.
 
 ## Rendering
 

@@ -210,12 +210,12 @@ export const buildSchema = () => {
     'Screens of the app, for screenshot and walkthrough scenes',
   );
   const voice = {
-    description: 'The narrator. Default: Deepgram aura-2-hermes-en at 1.0, falling back to macOS say, espeak-ng, then silence',
+    description: 'The narrator. Default: Deepgram aura-2-hermes-en at 1.0, falling back to macOS say, espeak-ng, then a silent draft. { "provider": "text" } is the no-voice mode: no narration, each line shown as on-screen text at a reading pace, with music and sound effects (free, no API key)',
     oneOf: [
       str('An Aura-2 model name', { pattern: O.VOICE_MODEL.source }),
       obj(
         {
-          provider: en(O.VOICE_PROVIDERS),
+          provider: en(O.VOICE_PROVIDERS, 'deepgram (natural), say (macOS system voice, free, robotic), none (a silent layout draft, not for publishing) or text (no voice: on-screen text, music and sound effects; free, finished)'),
           model: str('Deepgram Aura-2 model', { pattern: O.VOICE_MODEL.source }),
           speed: num('Pace (pitch kept); above 1.05 sounds hurried', { minimum: 0.9, maximum: 1.1 }),
           sayVoice: str('macOS say voice for the fallback'),

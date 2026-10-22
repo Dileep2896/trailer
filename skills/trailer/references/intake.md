@@ -9,7 +9,8 @@ too, adding its own questions to the same message.
 A trailer is token-heavy: the agent reads the project, writes a script and config, and
 then looks at rendered frames as images, several times. Say this plainly, in two or three
 lines, before starting. Rendering, music and captions run locally and cost no tokens; a
-Deepgram voice is billed by Deepgram, not in tokens.
+Deepgram voice is billed by Deepgram, not in tokens, and a film with no voice costs nothing
+outside the session.
 
 What drives the cost, from most to least:
 
@@ -61,8 +62,21 @@ use every default.
 2. **Length and shape:** 30, 45 or 60 seconds; 16:9, 9:16 or 1:1? [the use-case default]
 3. **Audience and takeaway:** who watches it, and what should they do afterwards (a link, a
    repo, "try the demo")? [developers; the repo link]
-4. **Voice:** natural narrator (needs a `DEEPGRAM_API_KEY`), the free system voice, your own
-   recording, or music and captions only? [natural if a key is found, else the system voice]
+4. **Voice:** one of
+   - **Natural narrator** (Deepgram; needs a `DEEPGRAM_API_KEY`);
+   - **No narration: music, sound effects and on-screen text** (free, no API key; a finished
+     film, the script shown as titles at a reading pace);
+   - **System voice** (`say` / `espeak-ng`; free too, but it sounds robotic: fine for a draft);
+   - **Your own recording**.
+
+   [natural if a key is found; with no key, no narration for anything meant to be published,
+   the system voice only if the user wants a quick draft]
+
+   Check for the key first (`doctor <dir> --json`: `voice.key`) so the default in brackets is
+   the real one. With no key, do not silently pick the robot voice: ask, defaulting to no
+   narration. "No narration" sets `"voice": { "provider": "text" }` in the config (see
+   `voice.md`); it also changes the script: fewer, shorter lines (`craft.md`, "Writing for
+   reading").
 5. **Limits and proof:** any names, brands, numbers or customer data that must not appear, and
    do you have a result number with its source? [none off-limits; proof from the repo only]
 
@@ -78,19 +92,21 @@ Use-case defaults:
 
 Example message:
 
-> This makes a voiced 60 s film. Heads-up on cost: the agent reads your project and reviews
+> This makes a 60 s film. Heads-up on cost: the agent reads your project and reviews
 > rendered frames as images, so a Studio film is token-heavy (about 0.65M fresh plus 16M cached
 > tokens measured per film); Standard is roughly half that and Quick about a fifth (estimates).
 > Rendering itself runs locally. A few questions, reply "defaults" to skip:
 > 1. Tier: Quick, Standard or Studio? [Standard]
 > 2. Length and shape: 30/45/60 s, 16:9/9:16/1:1? [60 s, 16:9]
 > 3. Who watches it, and where should they go after? [developers, the repo]
-> 4. Voice: natural (needs DEEPGRAM_API_KEY), system voice, your recording, or captions only? [system voice]
+> 4. Voice: natural narrator (needs DEEPGRAM_API_KEY, not found here), no narration (music, sound effects and on-screen text; free, no API key), the system voice (free, robotic), or your own recording? [no narration]
 > 5. Anything off-limits, and do you have a result number with its source? [none; repo only]
 
 ## 4. Record the answers
 
 Write the answers at the top of `.trailer/brief.md` under "Intake" (tier, length, aspect,
-audience, call to action, voice, limits, proof source). Every later step reads the tier from
+audience, call to action, voice, limits, proof source). For "no narration", write
+`voice: text (no narration)` and set `"voice": { "provider": "text" }` when the config is
+written; every later render then uses it directly, with no key check and no fallback. Every later step reads the tier from
 there and follows that tier's column above. In the delivery, name the tier used and, for Quick
 or Standard, offer the next tier up in one line.

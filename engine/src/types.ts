@@ -120,7 +120,7 @@ export type TrailerConfig = {
 export type Word = { w: string; start: number; end: number };
 export type TimelineLine = { index: number; src: string | null; from: number; frames: number; local: number; scene: string; text: string; words: Word[] | null };
 export type TimelineScene = { id: string; type: SceneConfig['type']; from: number; duration: number; lines: TimelineLine[] };
-export type Timeline = { scenes: TimelineScene[]; lines: TimelineLine[]; total: number; fps: number; beat: number; fit: { target: number; scale: number; met: boolean } | null };
+export type Timeline = { scenes: TimelineScene[]; lines: TimelineLine[]; total: number; fps: number; beat: number; text?: boolean; fit: { target: number; scale: number; met: boolean } | null };
 
 /** Input props of the Trailer composition (the engine writes them to .trailer/.stage/<render>/props.json). */
 export type TrailerProps = {

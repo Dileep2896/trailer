@@ -647,7 +647,7 @@
       ]
     },
     "voice": {
-      "description": "The narrator. Default: Deepgram aura-2-hermes-en at 1.0, falling back to macOS say, espeak-ng, then silence",
+      "description": "The narrator. Default: Deepgram aura-2-hermes-en at 1.0, falling back to macOS say, espeak-ng, then a silent draft. { \"provider\": \"text\" } is the no-voice mode: no narration, each line shown as on-screen text at a reading pace, with music and sound effects (free, no API key)",
       "oneOf": [
         {
           "type": "string",
@@ -661,8 +661,10 @@
               "enum": [
                 "deepgram",
                 "say",
-                "none"
-              ]
+                "none",
+                "text"
+              ],
+              "description": "deepgram (natural), say (macOS system voice, free, robotic), none (a silent layout draft, not for publishing) or text (no voice: on-screen text, music and sound effects; free, finished)"
             },
             "model": {
               "type": "string",
@@ -1405,7 +1407,7 @@
             "description": "Look and motion of the film"
           },
           "voice": {
-            "description": "The narrator. Default: Deepgram aura-2-hermes-en at 1.0, falling back to macOS say, espeak-ng, then silence",
+            "description": "The narrator. Default: Deepgram aura-2-hermes-en at 1.0, falling back to macOS say, espeak-ng, then a silent draft. { \"provider\": \"text\" } is the no-voice mode: no narration, each line shown as on-screen text at a reading pace, with music and sound effects (free, no API key)",
             "oneOf": [
               {
                 "type": "string",
@@ -1419,8 +1421,10 @@
                     "enum": [
                       "deepgram",
                       "say",
-                      "none"
-                    ]
+                      "none",
+                      "text"
+                    ],
+                    "description": "deepgram (natural), say (macOS system voice, free, robotic), none (a silent layout draft, not for publishing) or text (no voice: on-screen text, music and sound effects; free, finished)"
                   },
                   "model": {
                     "type": "string",

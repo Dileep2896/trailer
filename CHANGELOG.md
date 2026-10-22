@@ -6,8 +6,43 @@ All notable changes to trailer are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- A no-voice mode for a finished film without any speech API: `"voice": { "provider": "text" }`
+  (or `--voice-engine text`, `TRAILER_VOICE_ENGINE=text`). No text-to-speech or speech-to-text
+  call, no fallback warning and no "not for publishing" label; `--json` reports
+  `voice.engine: "text"`, `voice.mode: "text"`, `voice.fallback: false`.
+  - Each line is shown as title-style captions: the display face, one phrase at a time (at
+    most 5 words in 16:9, 4 in 1:1, 3 in 9:16), sized up to fill the caption band on one line,
+    no karaoke lighting. Captions are always on in this mode.
+  - Lines are timed at a reading pace (`READING` in `src/timeline.mjs`): 2.2 words a second
+    plus 0.7 s per line, 0.3 s per sentence break, 0.1 s per comma, at least 1.5 s a line, and
+    a 0.5 s blank beat between lines. Word cues fire when their phrase comes on screen.
+  - The word budget uses the reading pace: 1.5 words per second of film, 1.65 for cuts and
+    films of 30 s or less.
+  - The music bed is no longer ducked when a line has no audio, so it stays up for the whole
+    film in the text mode (and in silent drafts); the sound effects fire on their cues. In the
+    text mode the bed (0.75 instead of 0.42) and the effects (1.4x) are lifted to carry the
+    film (`TEXT_MIX`).
+  - A caption phrase the scene already shows on screen (a kinetic beat, the outro's name and
+    tagline) is not burned in twice in the text mode; the `.srt` and `.vtt` keep it.
+  - Lint warns when the text mode has captions turned off, or a scene with `"captions": "off"`
+    does not show its own words.
+  - `doctor --json` reports `voice.provider`, `voice.mode` (`narration`, `text`, `draft`,
+    `silent-draft`) and `voice.recommended` (`text` when there is no key).
+- When a render falls back all the way to a silent draft (no key, no local voice), the warning
+  recommends the text mode.
+- Docs and skills: the intake's voice question offers "No narration: music, sound effects and
+  on-screen text (free, no API key)" and defaults to it when no `DEEPGRAM_API_KEY` is found,
+  for anything meant to be published (the system voice is free too, but robotic). `voice.md`,
+  `config.md`, `docs/config-reference.md`, `craft.md` ("Writing for reading"), the use-case
+  skills' voice preflight, `/trailer:doctor` and the README cover it.
+
 ### Changed
 
+- Caption chunks split a long phrase into even parts (7 words at 3 a chunk: 3, 2, 2, never
+  3, 3, 1) and avoid ending a chunk on a word that leans on the next ("the", "of", "to").
+  The grouping lives in `src/phrases.mjs`, shared by the captions and the text mode's timer.
 - Renamed from showreel to trailer: the plugin, skills (`trailer`, `trailer-launch`, ...),
   commands (`/trailer:new` and friends), engine CLI (`engine/trailer.mjs`), env vars
   (`TRAILER_*`), the per-project `.trailer/` folder, `trailer.config.json` and the

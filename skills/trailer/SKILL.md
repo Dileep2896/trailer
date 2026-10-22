@@ -55,7 +55,7 @@ The reference files write this prefix as `<engine>`. The main commands:
 | environment check | `doctor --json` |
 | scaffold `.trailer/` | `init <dir> --use-case explainer` |
 | validate + copy lint | `<dir> --lint --json` |
-| cheap layout stills, no TTS | `<dir> --stills scenes --voice-engine none --safe-overlay --json` |
+| cheap layout stills, no TTS | `<dir> --stills scenes --voice-engine none --safe-overlay --json` (text mode: `--voice-engine text`) |
 | full render | `<dir> --json` |
 | render, then review frames | `<dir> --review --json` (add `--skip-capture` when screenshots are unchanged) |
 | one cut / every cut | `<dir> --cut short --json` / `<dir> --all --json` |
@@ -133,11 +133,14 @@ written describe Studio.
    for reference), plus `brief.md`, `script.md` and `.gitignore`. If the config already
    exists, read it and `.trailer/out/history.jsonl` (formats already used here) before
    changing anything. Never overwrite a committed config without saying so.
-3. If `doctor` reports `voice.key: "absent"`, tell the user **once**: the draft will use the
-   free system voice (`say` on macOS, `espeak-ng` on Linux), and a natural voice needs a
-   `DEEPGRAM_API_KEY` in the environment, `<dir>/.trailer/.env` or `<dir>/.env` (see
-   `references/voice.md`). Do not
-   block on it, and never ask the user to paste a key into the chat.
+3. If the user chose **no narration** at intake (or the config has `"voice": { "provider":
+   "text" }`), skip the key entirely: the film uses the text mode directly (music, sound
+   effects and on-screen text; `doctor` reports `voice.mode: "text"`). Otherwise, if `doctor`
+   reports `voice.key: "absent"`, tell the user **once**: a natural voice needs a
+   `DEEPGRAM_API_KEY` in the environment, `<dir>/.trailer/.env` or `<dir>/.env`; without one,
+   the free choices are **no narration** (a finished film, the default for anything meant to
+   be published) or the system voice (`say` / `espeak-ng`, robotic, for drafts). See
+   `references/voice.md`. Do not block on it, and never ask the user to paste a key into the chat.
 
 ## Step 2: inventory (read the project, do not run it)
 
@@ -267,8 +270,9 @@ A word count outside `wordBudget` is fixed by **cutting words**, never by raisin
 
 Quick skips this step; Standard runs it once.
 
-Run `<engine> <dir> --stills scenes --voice-engine none --safe-overlay --json`, then Read the
-stills under `.trailer/review/<aspect>/`. Fix clipped text, overlaps, captions over focus
+Run `<engine> <dir> --stills scenes --voice-engine none --safe-overlay --json` (for a film with
+no narration, `--voice-engine text` instead, so the stills show the titles at reading pace),
+then Read the stills under `.trailer/review/<aspect>/`. Fix clipped text, overlaps, captions over focus
 targets and empty frames in the config. Repeat once if needed. This costs seconds; a full
 render costs minutes.
 
@@ -276,7 +280,7 @@ render costs minutes.
 
 Run `<engine> <dir> --review --json`. Check the summary: `ok`, `seconds` within plus or minus
 5 s of `targetSeconds` (3 s for a target of 30 s or less), and `voice.fallback`. If the voice fell back, say so plainly in the
-delivery.
+delivery. `voice.mode: "text"` is the chosen no-voice mode, not a fallback: deliver it as final.
 
 ## Step 10: the frame-review loop
 

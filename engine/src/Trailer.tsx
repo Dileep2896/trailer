@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { AbsoluteFill, Audio, Freeze, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { TrailerContext, CaptionPosContext, PalContext, captionPosOf, makeTheme, motion, walkPlan, type Pal, type Theme } from './theme';
 import { normalizeConfig } from './config.mjs';
+import { TEXT_MIX } from './options.mjs';
 import { CastOverlay, SceneBodyV3, isV3Scene, sfxV3 } from './v3/registry';
 import { LOOP_FADE, buildTimeline, itemTimes, settleFrame, settledFrameAt, settledStart } from './timeline.mjs';
 import { Backdrop, Grain } from './ui';
@@ -163,10 +164,15 @@ export const Trailer: React.FC<TrailerProps> = ({ config: raw, shots, media, mus
   const tl = useMemo(() => buildTimeline(config, media) as Timeline, [config, media]);
   const T = tl.total;
   const pals: Pal[] = config.scenes.map((s) => theme[surfaceOf(s, theme)]);
-  const sfx = useMemo(() => sfxFor(config.scenes, tl, theme), [config, tl, theme]);
+  // With no voice (the text mode) the bed and the effects carry the sound: TEXT_MIX lifts both.
+  const mix = tl.text ? TEXT_MIX : { music: 0.42, sfx: 1 };
+  const sfx = useMemo(() => sfxFor(config.scenes, tl, theme).map((x) => ({ ...x, volume: x.volume * mix.sfx })), [config, tl, theme, mix.sfx]);
   const musicVolume = typeof config.music === 'object' && config.music?.volume !== undefined ? config.music.volume : 1;
+  // The bed ducks under voiced lines only: in the text mode (and a silent draft) no line has
+  // audio, so the music stays up the whole film and the sound effects sit on top of it.
+  const voiced = useMemo(() => tl.lines.filter((l) => l.src), [tl]);
   const voiceAt = (frame: number) =>
-    Math.max(0, ...tl.lines.map((l) => interpolate(frame, [l.from - 6, l.from, l.from + l.frames, l.from + l.frames + 8], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })));
+    Math.max(0, ...voiced.map((l) => interpolate(frame, [l.from - 6, l.from, l.from + l.frames, l.from + l.frames + 8], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })));
   const palAt = (frame: number) => {
     const i = tl.scenes.findIndex((s) => frame >= s.from && frame < s.from + s.duration);
     return pals[Math.max(0, i)] ?? theme.main;
@@ -284,7 +290,7 @@ export const Trailer: React.FC<TrailerProps> = ({ config: raw, shots, media, mus
         {music && (
           <Audio
             src={staticFile(music)}
-            volume={(f) => interpolate(f, [0, 8, T - 45, T], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) * (0.42 - 0.3 * voiceAt(f)) * musicVolume}
+            volume={(f) => interpolate(f, [0, 8, T - 45, T], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) * (mix.music - 0.3 * voiceAt(f)) * musicVolume}
           />
         )}
       </AbsoluteFill>

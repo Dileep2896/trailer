@@ -1,7 +1,8 @@
 // Caption chunks from the timeline: each voice line's timed words are grouped into short
-// chunks (at most `maxWords`, about two lines, breaking after punctuation), placed on the
-// film's frames. Shared by the video (karaoke captions) and trailer.mjs (the .srt and .vtt).
+// chunks (at most `maxWords`, about two lines, breaking after punctuation; src/phrases.mjs),
+// placed on the film's frames. Shared by the video (karaoke captions) and trailer.mjs (the .srt and .vtt).
 import { FPS } from './timeline.mjs';
+import { phraseGroups } from './phrases.mjs';
 
 const proportional = (text, length) => {
   const words = text.split(/\s+/).filter(Boolean);
@@ -16,8 +17,13 @@ const proportional = (text, length) => {
   });
 };
 
-/** [{ from, to, text, words: [{ text, from, to }] }] in film frames. */
-export const captionChunks = (tl, { maxWords = 6, maxChars = 44 } = {}) => {
+/**
+ * [{ from, to, text, words: [{ text, from, to }] }] in film frames. With `reading` (the text
+ * mode) a chunk stays up until the next chunk of its line and the line's last chunk until the
+ * line ends, so the beat between lines is blank; narration captions hold 10 frames past their
+ * last word instead.
+ */
+export const captionChunks = (tl, { maxWords = 6, maxChars = 44, reading = false } = {}) => {
   const chunks = [];
   for (const line of tl.lines) {
     const words = line.words?.length ? line.words : proportional(line.text, line.frames / FPS);
@@ -25,43 +31,23 @@ export const captionChunks = (tl, { maxWords = 6, maxChars = 44 } = {}) => {
       const from = line.from + Math.round(w.start * FPS);
       return { text: w.w, from, to: Math.max(from + 2, line.from + Math.round(w.end * FPS)) };
     });
-    // Phrases end at punctuation; a phrase longer than maxWords (or two lines of text) is split
-    // into even parts, so no chunk strands a single word.
-    const phrases = [];
-    let cur = [];
-    timed.forEach((w, i) => {
-      cur.push(w);
-      if (/[.,;:!?…—–]$/.test(w.text) || i === timed.length - 1) {
-        phrases.push(cur);
-        cur = [];
-      }
-    });
-    // Fold a one-word phrase into its neighbour when they fit together.
-    for (let i = 0; i < phrases.length; i += 1) {
-      if (phrases[i].length === 1 && phrases.length > 1) {
-        const j = i + 1 < phrases.length && (i === 0 || phrases[i + 1].length <= phrases[i - 1].length) ? i + 1 : i - 1;
-        if (phrases[i].length + phrases[j].length <= maxWords) {
-          phrases[Math.min(i, j)] = j > i ? [...phrases[i], ...phrases[j]] : [...phrases[j], ...phrases[i]];
-          phrases.splice(Math.max(i, j), 1);
-          i -= 1;
-        }
-      }
-    }
-    for (const ph of phrases) {
-      const chars = ph.reduce((a, w) => a + w.text.length + 1, 0);
-      const parts = Math.max(Math.ceil(ph.length / maxWords), Math.ceil(chars / (maxChars * 2)));
-      const per = Math.ceil(ph.length / parts);
-      for (let k = 0; k < ph.length; k += per) {
-        const ws = ph.slice(k, k + per);
-        chunks.push({ line: line.index, words: ws, from: ws[0].from, to: ws[ws.length - 1].to, text: ws.map((w) => w.text).join(' ') });
-      }
+    const end = line.from + line.frames;
+    for (const g of phraseGroups(timed.map((w) => w.text), { maxWords, maxChars })) {
+      const ws = g.map((k) => timed[k]);
+      chunks.push({ line: line.index, words: ws, from: ws[0].from, to: ws[ws.length - 1].to, text: ws.map((w) => w.text).join(' '), end });
     }
   }
-  // Hold each chunk a little past its last word, up to the next chunk; never under 10 frames.
   chunks.forEach((c, i) => {
     const next = chunks[i + 1];
-    const hold = c.to + 10;
-    c.to = Math.max(c.from + 10, next ? Math.min(hold, next.from) : hold);
+    if (reading) {
+      const until = next && next.line === c.line ? next.from : c.end;
+      c.to = Math.max(c.from + 10, next ? Math.min(until, next.from) : until);
+    } else {
+      // Hold each chunk a little past its last word, up to the next chunk; never under 10 frames.
+      const hold = c.to + 10;
+      c.to = Math.max(c.from + 10, next ? Math.min(hold, next.from) : hold);
+    }
+    delete c.end;
   });
   return chunks;
 };

@@ -11,12 +11,12 @@ import { basename, relative, resolve } from 'node:path';
 import { ASPECTS, aspectSlug } from './src/config.mjs';
 import { FPS, buildTimeline } from './src/timeline.mjs';
 import { captionChunks, toSrt, toVtt } from './src/captions.mjs';
-import { USE_CASES, resolveCaptions, resolveMusic, resolveTheme } from './src/options.mjs';
+import { USE_CASES, isTextMode, resolveCaptions, resolveMusic, resolveTheme } from './src/options.mjs';
 import { EXIT, ENGINE, VERSION, durationOf, ffTools, ffprobe, importRuntime, missingFilters, playwrightShell, runtime, savedBrowser, trailerHome } from './scripts/runtime.mjs';
-import { LEGACY_KEYS, bannedTerms, envKeySource, durationWindow, lintCopy, lintFormat, loadProject, parseJson, projectPaths, rel, resolveVoice, spokenWords, validate, wordBudget } from './scripts/lib.mjs';
+import { LEGACY_KEYS, bannedTerms, envKeySource, durationWindow, lintCopy, lintFormat, loadProject, parseJson, projectPaths, rel, resolveVoice, spokenWords, validate, withVoiceEngine, wordBudget } from './scripts/lib.mjs';
 import { SCHEMA_FILE } from './scripts/gen-schema.mjs';
 
-const HELP = `trailer ${VERSION}: turn a project into a narrated, captioned film (16:9, 9:16 or 1:1)
+const HELP = `trailer ${VERSION}: turn a project into a narrated (or text-only), captioned film (16:9, 9:16 or 1:1)
 
 Usage
   trailer <projectDir> [flags]            lint, voice, render .trailer/trailer.config.json
@@ -35,8 +35,9 @@ Render flags
   --all                  render the film and every cut
   --lint                 only validate (schema + rules) and lint the copy; no voice, no render
   --no-render            stop after writing the props (for --studio or a later render)
-  --voice-engine deepgram|say|none
-                         override the voice provider (falls back deepgram > say > espeak-ng > none)
+  --voice-engine deepgram|say|none|text
+                         override the voice provider (falls back deepgram > say > espeak-ng > none);
+                         text: no voice, the lines as on-screen text with music and sound effects
   --keep-voice           use your own recordings at .trailer/voice/line-N.wav
   --skip-capture         reuse the last capture (.trailer/.stage/shots.json)
   --stills scenes|cues|<seconds or scene ids, comma separated>
@@ -58,7 +59,7 @@ Outputs (in <projectDir>/.trailer/out/)
 Environment
   DEEPGRAM_API_KEY       Deepgram key (else .trailer/.env, else <projectDir>/.env)
   TRAILER_VOICE          Aura-2 model override (default aura-2-hermes-en)
-  TRAILER_VOICE_ENGINE   deepgram | say | none
+  TRAILER_VOICE_ENGINE   deepgram | say | none | text
   TRAILER_HOME           engine runtime + cache (default ~/.cache/trailer)
   REMOTION_BROWSER       a Chrome / headless shell executable to render with
 
@@ -151,8 +152,24 @@ const cmdDoctor = async () => {
   const say = process.platform === 'darwin' && spawnSync('which', ['say'], { stdio: 'ignore' }).status === 0;
   const espeak = spawnSync('which', ['espeak-ng'], { stdio: 'ignore' }).status === 0;
   const fallback = say ? 'say' : espeak ? 'espeak-ng' : 'none';
-  voiceInfo = { key: source ? 'present' : 'absent', source, fallback, project: positional[1] ?? '.' };
-  add('voice', true, `DEEPGRAM_API_KEY ${source ? `present (${source})` : 'absent (checked the environment, .trailer/.env and .env)'}; ${source ? 'narrator: Deepgram' : `drafts use the local fallback: ${fallback === 'none' ? 'none (silent drafts only)' : fallback}`}`);
+  // The project's chosen voice: voice.provider in its config (TRAILER_VOICE_ENGINE overrides).
+  let chosen = null;
+  try {
+    const c = withVoiceEngine(existsSync(pp.file) ? JSON.parse(readFileSync(pp.file, 'utf8')) : {});
+    chosen = (c.voice && typeof c.voice === 'object' ? c.voice.provider : null) ?? (existsSync(pp.file) ? 'deepgram' : null);
+  } catch {}
+  const text = chosen === 'text';
+  // mode: what a render of this project does. "text" is a chosen mode (no voice, nothing to
+  // fall back from), never a fallback.
+  const mode = text ? 'text' : source ? 'narration' : fallback === 'none' ? 'silent-draft' : 'draft';
+  // recommended: what to publish with. With no key, the text mode (free, and finished) beats
+  // the robotic local voice for anything that is going out.
+  const recommended = text ? 'text' : source ? 'deepgram' : 'text';
+  voiceInfo = { key: source ? 'present' : 'absent', source, provider: chosen, mode, fallback: text ? null : fallback, recommended, project: positional[1] ?? '.' };
+  const detail = text
+    ? `no voice (voice.provider "text", chosen): music, sound effects and on-screen text; no key needed${source ? ` (DEEPGRAM_API_KEY is present (${source}) but unused)` : ''}`
+    : `DEEPGRAM_API_KEY ${source ? `present (${source})` : 'absent (checked the environment, .trailer/.env and .env)'}; ${source ? 'narrator: Deepgram' : `drafts use the local fallback: ${fallback === 'none' ? 'none (silent drafts only)' : `${fallback} (free, robotic)`}; to publish without a key, choose the text mode (voice.provider "text": music, sound effects and on-screen text)`}`;
+  add('voice', true, detail);
   add('home', true, trailerHome());
   const ok = checks.every((c) => c.ok);
   if (json) process.stdout.write(`${JSON.stringify({ ok, version: VERSION, voice: voiceInfo, checks }, null, 2)}\n`);
@@ -240,7 +257,8 @@ const lintRender = async (p, rtDir, media) => {
   let chunks = [];
   if (!errors.length) {
     tl = buildTimeline(p.config, media ?? { lines: [] });
-    chunks = captionChunks(tl, { maxWords: resolveCaptions(p.config).maxWords });
+    const cap = resolveCaptions(p.config);
+    chunks = captionChunks(tl, { maxWords: cap.maxWords, reading: cap.reading });
   }
   const copy = lintCopy(p.config, chunks.map((c, i) => ({ where: `caption ${i + 1}`, text: c.text })), { banned: bannedTerms(p) });
   errors.push(...copy.errors);
@@ -248,7 +266,13 @@ const lintRender = async (p, rtDir, media) => {
   if (!errors.length) warnings.push(...lintFormat(p.config, { captionChunks: chunks, tl }));
   const words = spokenWords(p.config);
   const budget = wordBudget(p.config);
-  if (words < budget[0] || words > budget[1]) warnings.push(`${words} spoken words; ${p.config.targetSeconds} s wants ${budget[0]} to ${budget[1]} at a natural pace${words > budget[1] ? ' (cut words; never speed the voice up)' : ''}`);
+  const text = isTextMode(p.config);
+  if (words < budget[0] || words > budget[1])
+    warnings.push(
+      text
+        ? `${words} words on screen; ${p.config.targetSeconds} s wants ${budget[0]} to ${budget[1]} at a reading pace (voice.provider "text")${words > budget[1] ? ' (cut words: shorter lines read faster)' : ''}`
+        : `${words} spoken words; ${p.config.targetSeconds} s wants ${budget[0]} to ${budget[1]} at a natural pace${words > budget[1] ? ' (cut words; never speed the voice up)' : ''}`,
+    );
   return { errors: [...new Set(errors)], warnings: [...new Set(warnings)], tl, chunks, words, budget };
 };
 
@@ -258,6 +282,9 @@ const outName = (p, ext, suffix = '') => resolve(p.out, `${p.name}${suffix}.${ex
 
 const renderOne = async (target, opts, ctx) => {
   const p = loadProject(target, opts);
+  // --voice-engine / TRAILER_VOICE_ENGINE go into the config, so the text mode reaches the
+  // lint, the timeline, the captions and the video whichever way it was chosen.
+  p.config = withVoiceEngine(p.config, { engine: flags['--voice-engine'] });
   const summary = {
     ok: false,
     aspect: p.config.aspect,
@@ -290,9 +317,12 @@ const renderOne = async (target, opts, ctx) => {
   const th = resolveTheme(p.config);
   const mu = resolveMusic(p.config);
   log(`theme ${th.preset ?? 'custom'} ${th.mode} | ${th.background} | cut ${th.transition} | motion ${th.motion} | type ${th.type} | fonts ${th.fonts.display}/${th.fonts.ui}/${th.fonts.mono} | music ${p.config.music === false ? 'off' : (mu.file ?? `${mu.bpm} BPM ${mu.mood}`)}`);
-  log(`${pre.words} words (budget ${pre.budget[0]} to ${pre.budget[1]} for ${p.config.targetSeconds} s); copy ok`);
+  log(`${pre.words} words (budget ${pre.budget[0]} to ${pre.budget[1]} for ${p.config.targetSeconds} s${isTextMode(p.config) ? ', at a reading pace: no voice, on-screen text' : ''}); copy ok`);
   const settings = resolveVoice(p.config, { engine: flags['--voice-engine'] });
-  summary.voice = { engine: settings.provider, model: settings.model, speed: settings.speed, fallback: false };
+  const textMode = settings.provider === 'text';
+  summary.voice = textMode
+    ? { engine: 'text', mode: 'text', model: null, speed: null, fallback: false }
+    : { engine: settings.provider, mode: settings.provider === 'none' ? 'silent-draft' : 'narration', model: settings.model, speed: settings.speed, fallback: false };
   if (flags['--lint']) {
     summary.ok = true;
     summary.scenes = pre.tl.scenes.map((s) => ({ id: s.id, type: s.type, from: s.from, duration: s.duration, lines: s.lines.length }));
@@ -324,8 +354,8 @@ const renderOne = async (target, opts, ctx) => {
   step('voice');
   const { voice } = await import('./scripts/voice.mjs');
   const media = await voice(p, { dir, keep: !!flags['--keep-voice'], settings, log, warn: warnLog });
-  summary.voice = { engine: media.provider, model: media.provider === 'deepgram' ? media.model : null, speed: media.speed, fallback: media.fallback };
-  if (media.fallback) summary.warnings.push(`voice fell back to "${media.provider}"; not for publishing`);
+  summary.voice = { engine: media.provider, mode: media.mode, model: media.provider === 'deepgram' ? media.model : null, speed: media.provider === 'text' ? null : media.speed, fallback: media.fallback };
+  if (media.fallback) summary.warnings.push(`voice fell back to "${media.provider}"; not for publishing${media.provider === 'none' ? '. For a finished film without a voice, use voice.provider "text" (music, sound effects and on-screen text)' : ''}`);
   summary.voiceSeconds = media.seconds;
 
   const post = await lintRender(p, null, media);
@@ -341,9 +371,9 @@ const renderOne = async (target, opts, ctx) => {
   const seconds = tl.total / FPS;
   summary.seconds = +seconds.toFixed(2);
   summary.scenes = tl.scenes.map((s) => ({ id: s.id, type: s.type, from: s.from, duration: s.duration, lines: s.lines.length }));
-  log(`\ntimeline ${tl.total} frames = ${seconds.toFixed(1)} s (voice ${media.seconds.toFixed(1)} s)`);
+  log(`\ntimeline ${tl.total} frames = ${seconds.toFixed(1)} s (${media.provider === 'text' ? 'reading' : 'voice'} ${media.seconds.toFixed(1)} s)`);
   for (const s of tl.scenes) log(`  ${s.id.padEnd(14)} ${String(s.from).padStart(5)} +${String(s.duration).padStart(4)}  ${s.lines.length} line(s)`);
-  if (tl.fit) log(`fitSeconds ${p.config.fitSeconds}: slack scaled to ${tl.fit.scale}; ${tl.fit.met ? 'met' : 'NOT met (the voice alone is too long: cut words)'}`);
+  if (tl.fit) log(`fitSeconds ${p.config.fitSeconds}: slack scaled to ${tl.fit.scale}; ${tl.fit.met ? 'met' : `NOT met (the ${media.provider === 'text' ? 'reading time' : 'voice'} alone is too long: cut words)`}`);
   const [lo, hi] = durationWindow(p.config);
   if (seconds < lo || seconds > hi) {
     const w = `${seconds.toFixed(1)} s is outside ${lo} to ${hi} s for targetSeconds ${p.config.targetSeconds}; ${seconds < lo ? 'add a line or some "breath"/"hold"' : 'cut words or set fitSeconds'}`;
@@ -515,7 +545,7 @@ const main = async () => {
     const done = results.filter((s) => s.outputs.mp4 || s.outputs.review);
     if (done.length) {
       log('\ndone:');
-      for (const s of done) log(`  ${s.aspect}${s.cut ? ` (${s.cut})` : ''}: ${s.outputs.mp4 ?? s.outputs.review}  ${s.seconds} s  voice ${s.voice?.engine}${s.voice?.fallback ? ' (FALLBACK)' : ''}`);
+      for (const s of done) log(`  ${s.aspect}${s.cut ? ` (${s.cut})` : ''}: ${s.outputs.mp4 ?? s.outputs.review}  ${s.seconds} s  ${s.voice?.engine === 'text' ? 'no voice (text mode)' : `voice ${s.voice?.engine}`}${s.voice?.fallback ? ' (FALLBACK)' : ''}`);
     } else if (flags['--lint'] && code === EXIT.ok) log('\nlint ok');
   }
   const summary = results.length === 1 ? results[0] : { ok: results.every((s) => s.ok), renders: results };

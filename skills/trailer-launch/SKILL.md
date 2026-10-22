@@ -131,9 +131,12 @@ Follow these steps in order. Do not skip the stills pass or the review loop.
 0. **Preflight.** Run `$SR doctor <dir> --json`. If `.trailer/` is missing, run
    `$SR init <dir> --use-case launch`. It writes the launch starter (the same file as
    `assets/launch.config.json`); the steps refer to the starter's scenes. For a release recap,
-   step 6 rewrites that config from `assets/release-recap.config.json`. If `doctor` reports `voice.key: "absent"`, say once
-   that the draft will use the free `say` voice, and that `DEEPGRAM_API_KEY` in the
-   environment or in `<dir>/.env` gives the real narrator. Do not block on it. If
+   step 6 rewrites that config from `assets/release-recap.config.json`. If the user chose no narration at intake,
+   set `"voice": { "provider": "text" }` and skip the key (a finished film: music, sound
+   effects and on-screen text). Otherwise, if `doctor` reports `voice.key: "absent"`, say once
+   that `DEEPGRAM_API_KEY` in the environment, `<dir>/.trailer/.env` or `<dir>/.env` gives the
+   real narrator, and that without it the free choices are no narration (recommended for a
+   launch that will be published) or the robotic system voice (drafts). Do not block on it. If
    `.trailer/trailer.config.json` already holds a film, do not overwrite it. Ask whether to
    replace it or to add a cut.
 
@@ -179,7 +182,7 @@ Follow these steps in order. Do not skip the stills pass or the review loop.
      shipping".
    - In-world chat with "we" raises a warning. Rephrase it ("Can someone restore...").
 
-8. **Layout pass before TTS.** Run `$SR <dir> --stills scenes --voice-engine none --safe-overlay --json`.
+8. **Layout pass before TTS.** Run `$SR <dir> --stills scenes --voice-engine none --safe-overlay --json` (`--voice-engine text` for a film with no narration).
    Read every still in `.trailer/review/16x9/`. Fix clipping, overflow, captions covering a
    focus target, and unreadable text, and repeat until it is clean. This pass is cheap.
 
@@ -242,7 +245,7 @@ More lines, including CTA phrasing by availability, are in `references/launch-co
 | exit `3` (missing dependency) | Run `$SR doctor --json` and show the user its exact install hint (ffmpeg, a browser, Node ≥ 20). Do not try to install system packages yourself. |
 | exit `2` (lint errors) | Fix each error at the config path it names, then re-lint. Never delete a scene just to silence the lint. |
 | exit `1` (runtime) | Read the stderr tail and match it in `troubleshooting.md`. Re-run with `--frames 0-90` to isolate a scene. |
-| `voice.fallback: true` | The film was rendered with `say`, `espeak-ng` or silence. Report it, and tell the user how to add the key. Do not present it as final. |
+| `voice.fallback: true` | The film was rendered with `say`, `espeak-ng` or silence. Report it, and tell the user how to add the key, or offer the no-voice text mode (`"voice": { "provider": "text" }`) for a finished film without a key. Do not present it as final. |
 | more than 5 s over target | Cut words from the longest scenes. Never raise `voice.speed` above 1.05. |
 | no git tags | Use a date range (`release-recap.md` section 1b), or ask the user for the two refs. |
 | first release (no earlier tag) | Treat it as a product launch, not a recap. |

@@ -6,7 +6,8 @@
 //
 // config.fitSeconds trims leads, tails, gaps and minimums (never the voice) until the cut is
 // at or under that length.
-import { resolveMusic } from './options.mjs';
+import { isTextMode, resolveCaptions, resolveMusic } from './options.mjs';
+import { phraseGroups } from './phrases.mjs';
 import { V3_TYPES, normalizeConfig } from './config.mjs';
 
 export const FPS = 30;
@@ -78,6 +79,54 @@ export const estimateLineSeconds = (text, speed = 1) => {
   return +(Math.max(SPEECH.min, sec) / k).toFixed(3);
 };
 
+/**
+ * The no-voice (text) mode: every line is on-screen text, so a line lasts as long as it takes
+ * to read, not to say. Subtitle guidelines put comfortable adult reading at 160 to 180 words a
+ * minute (BBC) or 17 characters a second (Netflix, about 3 words a second); children's and
+ * "watching something else at the same time" rates sit near 13 characters a second (about 2.4
+ * words). Trailer text competes with a moving picture, so the engine reads at 2.5 words a
+ * second (150 wpm), adds 0.6 s per line to notice the new phrase, 0.25 s per sentence break
+ * and 0.1 s per comma, colon or semicolon, holds any line at least 1.5 s (a two-word title still
+ * registers) and leaves a 0.5 s beat (`gap`, frames) between lines so the next phrase reads as
+ * new. Across a film that comes to about 1.5 words a second of film (the word budget in
+ * scripts/lib.mjs), against 1.9 for a narrator.
+ */
+export const READING = { wordsPerSecond: 2.2, perLine: 0.7, perSentence: 0.3, perClause: 0.1, min: 1.5, gap: 15 };
+const textOf = (text) => String(text ?? '').trim();
+const wordCount = (t) => t.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+export const estimateReadSeconds = (text) => {
+  const t = textOf(text);
+  const breaks = Math.max(0, (t.match(/[.?!]+(?=\s|$)/g) ?? []).length - 1);
+  const clauses = (t.match(/[,;:]/g) ?? []).length;
+  const sec = wordCount(t) / READING.wordsPerSecond + READING.perLine + READING.perSentence * breaks + READING.perClause * clauses;
+  return +Math.max(READING.min, sec).toFixed(3);
+};
+
+/**
+ * Word times (seconds into the line) for a line shown as text: the line is split into the
+ * phrases the captions show (src/phrases.mjs) and each phrase is on screen for its share of the
+ * line (its words plus one, the time to notice it). Every word of a phrase starts when the
+ * phrase appears, so a word cue fires when its word comes on screen; the phrase's last word
+ * ends when the phrase leaves.
+ */
+export const readingWords = (text, seconds, { maxWords = 5, maxChars = 44 } = {}) => {
+  const words = textOf(text).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  const groups = phraseGroups(words, { maxWords, maxChars });
+  const weight = groups.map((g) => g.length + 1);
+  const total = weight.reduce((a, b) => a + b, 0);
+  const out = [];
+  let t = 0;
+  for (const [i, g] of groups.entries()) {
+    const d = (seconds * weight[i]) / total;
+    g.forEach((k, j) => {
+      out[k] = { w: words[k], start: +t.toFixed(3), end: +(j === g.length - 1 ? t + d : t).toFixed(3) };
+    });
+    t += d;
+  }
+  return out;
+};
+
 const voiceSpeed = (config) => (config.voice && typeof config.voice === 'object' && Number(config.voice.speed) > 0 ? Number(config.voice.speed) : 1);
 
 /** A scene's id: its `id`, else its type. */
@@ -91,7 +140,9 @@ const layout = (config, media, k, grid) => {
   const lines = [];
   let units = 0;
   const v3 = config.kit >= 3;
-  const gapDefault = v3 ? V3_GAP : DEFAULT_GAP;
+  const text = isTextMode(config);
+  const gapDefault = text ? READING.gap : v3 ? V3_GAP : DEFAULT_GAP;
+  const cap = text ? resolveCaptions(config) : null;
   for (const s of config.scenes) {
     const id = sceneId(s);
     const d = (v3 ? V3_DEFAULTS[s.type] : SCENE_DEFAULTS[s.type]) ?? { lead: 8, tail: 16, min: 75 };
@@ -104,9 +155,10 @@ const layout = (config, media, k, grid) => {
     config.lines.forEach((l, i) => {
       if (l.scene !== id) return;
       const m = media.lines?.[i];
-      const seconds = m?.seconds ?? (v3 ? estimateLineSeconds(l.text, voiceSpeed(config)) : Math.max(1, l.text.split(/\s+/).length / 2.6));
+      const seconds = m?.seconds ?? (text ? estimateReadSeconds(l.text) : v3 ? estimateLineSeconds(l.text, voiceSpeed(config)) : Math.max(1, l.text.split(/\s+/).length / 2.6));
       const frames = Math.ceil(seconds * FPS);
-      const line = { index: i, src: m?.src ?? null, from: from + t, frames, local: t, scene: id, text: l.text, words: m?.words ?? null };
+      const words = m?.words ?? (text ? readingWords(l.text, frames / FPS, { maxWords: cap.maxWords }) : null);
+      const line = { index: i, src: text ? null : (m?.src ?? null), from: from + t, frames, local: t, scene: id, text: l.text, words };
       own.push(line);
       lines.push(line);
       t += frames + Math.max(1, Math.round((l.gap ?? gapDefault) * Math.min(1, k + 0.3)));
@@ -125,7 +177,8 @@ const layout = (config, media, k, grid) => {
 };
 
 /**
- * Build the timeline from the config and the measured voice lines.
+ * Build the timeline from the config and the measured voice lines (in the text mode, the
+ * reading times).
  * media.lines[i] = { src, seconds, words? } for config.lines[i]. Missing lines fall back to an
  * estimate from the text (estimateLineSeconds; classic films: 2.6 words a second), so the
  * video previews unvoiced.
@@ -149,7 +202,7 @@ export const buildTimeline = (raw, media = { lines: [] }) => {
       }
     }
   }
-  return { ...tl, beat, grid: used, fit: target ? { target, scale: Math.max(0, Number(k.toFixed(2))), met: tl.total <= target } : null };
+  return { ...tl, beat, grid: used, text: isTextMode(config), fit: target ? { target, scale: Math.max(0, Number(k.toFixed(2))), met: tl.total <= target } : null };
 };
 
 /**

@@ -6,6 +6,8 @@ import { shotBoxOnFrame } from './scenes/Walkthrough';
 import type { Box, WalkthroughScene } from './types';
 import { contrast, readable as readableHex } from './options.mjs';
 import { captionBand, useFrame, type CaptionPos } from './frame';
+import { glyphWidth } from './kit';
+import { sceneScreenText, shownOnScreen } from './copy.mjs';
 
 // Burned-in captions, timed to the voice word by word (Deepgram speech-to-text timestamps,
 // else proportional). Short chunks, the spoken word lit in the accent (karaoke), styled by
@@ -14,6 +16,15 @@ import { captionBand, useFrame, type CaptionPos } from './frame';
 // style box | outline | plain | pill,
 // size, case, fontRole display | ui | mono, activeWordColor. On a walkthrough, a caption that
 // would cover the ring or target box moves to the other edge.
+//
+// In the text mode (voice.provider "text", C.reading) there is no voice to follow: the
+// captions are the script, set as titles. Each phrase is shown whole (no word lighting) in the
+// display face, sized up to fill the caption band on one line (up to TITLE_SCALE x the caption
+// size, never below it; a phrase too long for one line wraps at the caption size), centred in
+// the same band, so the layout of every scene is unchanged. A phrase the scene already shows
+// on screen is not repeated.
+
+const TITLE_SCALE = 1.45;
 
 const overlap = (a: Box, b: Box) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 
@@ -27,15 +38,28 @@ export const Captions: React.FC<{ palAt: (frame: number) => Pal }> = ({ palAt })
   const scenePos = captionPosOf(config.scenes[si], T) as CaptionPos;
   const band0 = captionBand(fr, scenePos, C.size);
   const safe = { bottom: band0.reserveBottom, top: band0.reserveTop };
-  const chunks = useMemo(() => captionChunks(tl, { maxWords: C.maxWords }), [tl, C.maxWords]);
+  const reading = !!C.reading;
+  // In the text mode a phrase the scene already shows (a kinetic beat, the outro's tagline) is
+  // not burned in again; it stays in the .srt and .vtt.
+  const chunks = useMemo(() => {
+    const all = captionChunks(tl, { maxWords: C.maxWords, reading });
+    if (!reading) return all;
+    const screens = config.scenes.map((s) => sceneScreenText(s, config));
+    const sceneOf = (line: number) => tl.scenes.findIndex((s) => s.lines.some((l) => l.index === line));
+    return all.filter((c) => !shownOnScreen(c.text, screens[sceneOf(c.line)] ?? []));
+  }, [tl, C.maxWords, reading, config]);
   const chunk: CaptionChunk | undefined = chunks.find((c) => f >= c.from && f < c.to);
   if (!C.enabled || !chunk || scenePos === 'off') return null;
   const P = palAt(f);
-  const size = C.size;
+  const font = C.fontRole === 'display' ? T.display : C.fontRole === 'mono' ? T.mono : T.ui;
   const reserve = safe.bottom || safe.top;
   const sideL = fr.wide ? 0 : fr.safe.left;
   const sideR = fr.wide ? 0 : fr.safe.right;
   const W = Math.min(C.position === 'lower-third' ? 1180 : 1500, fr.W - (fr.wide ? 120 : sideL + sideR));
+  // A title fills the band on one line: the box's padding (about 1 em across) comes off the width.
+  const glyph = (C.fontRole === 'mono' ? 0.62 : C.fontRole === 'display' ? glyphWidth(T) : 0.56) * (C.case === 'upper' ? 1.1 : 1);
+  const fit = Math.floor((W * 0.94) / ((chunk.text.length + 1) * glyph));
+  const size = reading ? Math.max(C.size, Math.min(Math.round(C.size * TITLE_SCALE), fit)) : C.size;
 
   // Where it goes, moving off the ring or target on a walkthrough.
   let position = scenePos as typeof C.position;
@@ -58,7 +82,6 @@ export const Captions: React.FC<{ palAt: (frame: number) => Pal }> = ({ palAt })
     }
   }
 
-  const font = C.fontRole === 'display' ? T.display : C.fontRole === 'mono' ? T.mono : T.ui;
   const darkest = contrast(P.ink, '#000000') < contrast(P.bg, '#000000') ? P.ink : P.bg;
   const lightest = darkest === P.ink ? P.bg : P.ink;
   const boxBg = C.style === 'box' ? alpha(darkest, 0.84) : C.style === 'pill' ? P.surface : 'transparent';
@@ -106,7 +129,7 @@ export const Captions: React.FC<{ palAt: (frame: number) => Pal }> = ({ palAt })
               fontFamily: font,
               fontWeight: C.weight,
               fontSize: size,
-              lineHeight: 1.22,
+              lineHeight: reading ? 1.12 : 1.22,
               letterSpacing: C.fontRole === 'display' ? size * T.tracking * 0.4 : 0,
               textTransform: textCase,
               textAlign: lower ? 'left' : 'center',
@@ -116,8 +139,9 @@ export const Captions: React.FC<{ palAt: (frame: number) => Pal }> = ({ palAt })
             }}
           >
             {chunk.words.map((w, i) => {
-              const now = f >= w.from && f < w.to;
-              const said = f >= w.to;
+              // Narration lights the spoken word; a title is read whole.
+              const now = !reading && f >= w.from && f < w.to;
+              const said = reading || f >= w.to;
               return (
                 <span key={i} style={{ display: 'inline-block', marginRight: i < chunk.words.length - 1 ? '0.3em' : 0, color: now ? active : undefined, opacity: now || said ? 1 : 0.5, scale: now ? '1.035' : '1', transformOrigin: '50% 70%' }}>
                   {w.text}

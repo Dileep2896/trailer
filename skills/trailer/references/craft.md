@@ -10,6 +10,9 @@ remember the name.
   shorts and any film of 30 s or less run denser at **2.1 words per second**. Measured on finished films, this rate already
   includes the breaths, the music-only end card and the scene transitions. The engine reports
   the exact `wordBudget` in `--json`; trust it over mental arithmetic.
+- **No voice (the text mode) reads slower than it speaks: 1.5 words per second of film** (1.65
+  for cuts, shorts and 30 s films), about four fifths of a narrated film: 83 to 97 words for
+  60 s, 46 to 53 for 30 s. See "Writing for reading" below.
 - **Never speed the voice up to fit.** Keep `voice.speed` at 1.0 (0.9 to 1.1 is allowed, and
   the lint warns above 1.05). Cut words instead. Then use `hold`/`breath` and finally
   `fitSeconds`, which trims slack but never the voice.
@@ -71,6 +74,32 @@ Banned words (slop and hype): revolutionary, game-changing, cutting-edge, seamle
 leverage, unlock, supercharge, empower, delve, robust, streamline, next-generation,
 world-class, "in today's world". Add project-specific ones to `forbiddenTerms`.
 
+### Writing for reading (no voice)
+
+With `"voice": { "provider": "text" }` the script is read, not heard. Each line comes on screen
+as titles, one phrase at a time, and lasts as long as it takes to read (2.2 words a second
+plus 0.7 s, at least 1.5 s). Write for that:
+
+- **Fewer words.** Budget about 1.5 words per second of film, not 1.9. Cut the connective
+  tissue a narrator needs ("So", "That's where", "Here's the thing") first.
+- **Shorter lines, one phrase each.** Aim for 3 to 8 words a line, and at most about 12. A line
+  splits into phrases at its punctuation (5 words a phrase in 16:9, 4 in 1:1, 3 in 9:16), so
+  punctuate where a title should break: "Staging passed. Production didn't." reads as two
+  clean cards.
+- **Front-load the noun.** The first phrase on screen carries the line: "Config drift. Again."
+  over "Once again, the problem turns out to be config drift."
+- **No rhythm tricks that only work aloud** (a long pause, a stressed word). Make the beat with
+  a line break, a new scene or a `breath`.
+- **Don't duplicate the scene's own type.** When a `kinetic` beat or a `title` already shows
+  the line, set the scene's `captions` to `off` (the lint accepts it only when the scene shows
+  the words itself).
+- Cues still resolve against the words of the scene's lines, so keep the cue words in them.
+
+| narrated | for reading |
+| --- | --- |
+| "Staging says the flag is on. Production says off. Both files look right." | "Staging: flag on." / "Production: flag off." / "Both files look right." |
+| "Driftcheck reads every environment file and flags the one key that drifted." | "Driftcheck reads every env file." / "It flags the key that drifted." |
+
 ### Narration person
 
 - Default `narration.person: "third"`: the film talks about the project by name. The lint
@@ -83,7 +112,9 @@ world-class, "in today's world". Add project-specific ones to `forbiddenTerms`.
 
 ## 3. Captions
 
-- Captions are burned in, karaoke-style: the spoken word lights up in the accent.
+- Captions are burned in, karaoke-style: the spoken word lights up in the accent. In the text
+  mode they are titles instead: the display face, a whole phrase at a time, sized up to fill
+  the band on one line, no lighting.
 - 16:9: **48 to 56 px**, UI font, weight 700, at most 6 words a chunk, `box` or `pill`.
   9:16: **64 to 72 px**, at most 3 words a chunk, `position: "center-low"`.
 - Contrast at least 4.5:1 against a solid or 85%-opaque box.
@@ -138,8 +169,10 @@ world-class, "in today's world". Add project-specific ones to `forbiddenTerms`.
 
 ## 8. Sound and music
 
-- One narrator per film. The music changes with the format: `bpm` 90 to 132 and a `mood`
-  (`calm`, `warm`, `tense`, `driving`, `playful`). The bed is ducked under the voice.
+- One narrator per film, or none. The music changes with the format: `bpm` 90 to 132 and a
+  `mood` (`calm`, `warm`, `tense`, `driving`, `playful`). The bed is ducked under the voice;
+  with no voice it stays up the whole film, so the mood carries more of the feeling: pick it
+  with care, and let the sound effects mark the beats.
 - The drums enter on the `turn: true` scene. Put the turn where the project is first named.
 - The engine adds per-scene SFX (gavel on stamps, chalk on drawings, ticks on counters). Add a
   few explicit `sfx` only where a moment needs one; more than one extra per scene is noise.

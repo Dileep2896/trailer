@@ -65,8 +65,9 @@ Render flags
   --all                  render the film and every cut
   --lint                 only validate (schema + rules) and lint the copy; no voice, no render
   --no-render            stop after writing the props (for --studio or a later render)
-  --voice-engine deepgram|say|none
-                         override the voice provider (falls back deepgram > say > espeak-ng > none)
+  --voice-engine deepgram|say|none|text
+                         override the voice provider (falls back deepgram > say > espeak-ng > none);
+                         text: no voice, the lines as on-screen text with music and sound effects
   --keep-voice           use your own recordings at .trailer/voice/line-N.wav
   --skip-capture         reuse the last capture (.trailer/.stage/shots.json)
   --stills scenes|cues|<seconds or scene ids, comma separated>
@@ -88,7 +89,7 @@ Outputs (in <projectDir>/.trailer/out/)
 Environment
   DEEPGRAM_API_KEY       Deepgram key (else .trailer/.env, else <projectDir>/.env)
   TRAILER_VOICE          Aura-2 model override (default aura-2-hermes-en)
-  TRAILER_VOICE_ENGINE   deepgram | say | none
+  TRAILER_VOICE_ENGINE   deepgram | say | none | text
   TRAILER_HOME           engine runtime + cache (default ~/.cache/trailer)
   REMOTION_BROWSER       a Chrome / headless shell executable to render with
 

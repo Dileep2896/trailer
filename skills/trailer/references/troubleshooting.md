@@ -53,7 +53,9 @@ starts after 1 s, and a last scene with no `loop: true`; a speed above 1.05.
 | 403 / model not found | a mistyped or unavailable model | use `aura-2-hermes-en` or a name from Deepgram's list |
 | a network timeout | offline or a proxy | retry once; then `--voice-engine say` and say so |
 | words mistimed in captions | speech-to-text misheard a word, alignment fell back | rephrase the word; spell it the way it sounds in `say` |
-| `say` missing on Linux | macOS only | install `espeak-ng`, or use `--voice-engine none` for a silent layout draft |
+| `say` missing on Linux | macOS only | install `espeak-ng`, use `--voice-engine none` for a silent layout draft, or choose the no-voice mode (`"voice": { "provider": "text" }`) for a finished film |
+| "a silent draft ... For a finished film without a voice" | no key and no local voice; the run fell to `none` | offer the text mode (`voice.md`, "No voice"): set `"voice": { "provider": "text" }` and cut words to its budget |
+| a text-mode film runs long | reading is slower than speech: 1.5 words a second of film | cut words and shorten lines (`craft.md`, "Writing for reading"); `fitSeconds` only trims slack |
 
 ## Capture (only with `screenshot` scenes)
 

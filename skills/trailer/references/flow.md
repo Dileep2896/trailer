@@ -23,8 +23,10 @@ live in the core skill's folder inside the plugin: `skills/trailer/assets/` and
   has no `init` template, so the launch skill writes a recap from that asset.
 - Existing `.trailer/`: read the config, `brief.md`, `script.md` and `out/history.jsonl` first.
   A second film in the same repo uses a different format and theme.
-- Deepgram key absent: say once that the draft uses the system voice and how to add a key
-  (`voice.md`). Do not block.
+- No narration chosen at intake: set `"voice": { "provider": "text" }`; no key is needed or
+  checked. Otherwise, Deepgram key absent: say once how to add a key (`voice.md`) and that the
+  free choices are no narration (default for anything published) or the robotic system voice
+  (drafts). Do not block.
 
 ## 1. Inventory (read, do not run)
 
@@ -120,7 +122,8 @@ under "Accepted warnings".
 
 ## 7. Layout stills
 
-`<engine> <dir> --stills scenes --voice-engine none --safe-overlay --json`. Read the stills;
+`<engine> <dir> --stills scenes --voice-engine none --safe-overlay --json` (`--voice-engine text`
+in the text mode). Read the stills;
 fix layout before spending on voice.
 
 ## 8. Render
