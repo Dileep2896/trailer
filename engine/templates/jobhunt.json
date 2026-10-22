@@ -1,0 +1,416 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Dileep2896/trailer/main/engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "Ledger Twins",
+  "tagline": "Catch the duplicate invoice before the payment run.",
+  "repoUrl": "https://github.com/your-handle/ledger-twins",
+  "aspect": "16:9",
+  "targetSeconds": 60,
+  "fitSeconds": 62,
+  "voice": {
+    "provider": "deepgram",
+    "model": "aura-2-hermes-en",
+    "speed": 1
+  },
+  "narration": {
+    "person": "third"
+  },
+  "credit": {
+    "text": "Built by [FILL: your name]"
+  },
+  "forbiddenTerms": [],
+  "meta": {
+    "useCase": "jobhunt",
+    "format": "F10 Two Lanes, One Input",
+    "formatWhy": "The pain is one input (the same bill, sent twice) with two outcomes (paid twice, or held), so a mirrored split shows it faster than any explanation.",
+    "tone": "calm, exact, a finance-ops colleague explaining a near miss",
+    "sources": [
+      {
+        "claim": "Exact-match duplicate checks key on the invoice number",
+        "source": "[FILL: a public source from private/target.json, or delete the evidence scene]"
+      },
+      {
+        "claim": "6 of 6 planted duplicates caught, 0 false holds",
+        "source": "[FILL: your own test or seed result, file:line]"
+      }
+    ]
+  },
+  "theme": {
+    "mode": "light",
+    "bg": "#f2efe8",
+    "surface": "#fffdf8",
+    "ink": "#1c2321",
+    "muted": "#646a66",
+    "accent": "#2f6f5e",
+    "accent2": "#b5562c",
+    "warn": "#b4372f",
+    "fonts": {
+      "display": "Instrument Serif",
+      "ui": "Instrument Sans",
+      "mono": "IBM Plex Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 400,
+    "tracking": -0.02,
+    "radius": 14,
+    "background": "paper-grain",
+    "chrome": "minimal",
+    "transition": "push",
+    "motion": "smooth",
+    "camera": "drift",
+    "type": "split-reveal",
+    "motif": "highlighter",
+    "grain": 0.04,
+    "rhythm": "mono"
+  },
+  "app": {
+    "font": "Inter",
+    "mono": "JetBrains Mono",
+    "bg": "#ffffff",
+    "surface": "#f7f8fa",
+    "subtle": "#eef0f3",
+    "ink": "#15181d",
+    "muted": "#5f6670",
+    "border": "#dde1e6",
+    "accent": "#2f6f5e",
+    "onAccent": "#ffffff",
+    "good": "#2e7d4f",
+    "bad": "#c0392b",
+    "warn": "#b7791f",
+    "radius": 8,
+    "size": 22,
+    "dark": false
+  },
+  "music": {
+    "bpm": 96,
+    "mood": "calm"
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "box",
+    "size": 48,
+    "fontRole": "ui",
+    "weight": 700,
+    "maxWords": 6
+  },
+  "scenes": [
+    {
+      "id": "open",
+      "type": "split",
+      "mode": "versus",
+      "divider": "line",
+      "transition": "cut",
+      "left": {
+        "label": "MONDAY",
+        "title": "Harbor Supply Co.",
+        "sub": "Invoice HS-4471 · $8,240.00",
+        "emoji": "receipt",
+        "at": 0
+      },
+      "right": {
+        "label": "THURSDAY",
+        "title": "Harbor Supply Co.",
+        "sub": "Invoice HS-4471-B · $8,240.00",
+        "emoji": "receipt",
+        "at": "Thursday",
+        "verdict": {
+          "text": "SAME BILL",
+          "at": "again"
+        }
+      },
+      "say": "Monday, a vendor sends a bill. Thursday, the same bill arrives again, with a new invoice number."
+    },
+    {
+      "id": "paid-twice",
+      "type": "split",
+      "mode": "before-after",
+      "divider": "line",
+      "left": {
+        "label": "TODAY'S CHECK",
+        "tone": "bad",
+        "title": "Number is new",
+        "verdict": {
+          "text": "PAID TWICE",
+          "at": "twice"
+        },
+        "cast": [
+          {
+            "who": "open-peeps/sam",
+            "x": 480,
+            "size": 330,
+            "mood": "calm",
+            "at": 0,
+            "moods": [
+              {
+                "at": "twice",
+                "mood": "stressed"
+              }
+            ]
+          }
+        ]
+      },
+      "right": {
+        "label": "MONTH-END CLOSE",
+        "tone": "neutral",
+        "title": "Found three weeks later",
+        "emoji": "face-with-monocle",
+        "at": "close"
+      },
+      "say": "The number looks new, so both get approved and the money goes out twice. Someone spots it at the month-end close."
+    },
+    {
+      "id": "why",
+      "type": "evidence",
+      "layout": "stack",
+      "eyebrow": "Why it slips through",
+      "cards": [
+        {
+          "kind": "headline",
+          "meta": "DUPLICATE CHECK",
+          "text": "Matches on invoice number only",
+          "source": "a common default in payables tools",
+          "at": 0
+        },
+        {
+          "kind": "quote",
+          "text": "The vendor just added a suffix and resent it.",
+          "source": "an accounts payable lead on a forum",
+          "at": "suffix"
+        }
+      ],
+      "stamp": {
+        "text": "NO ALERT FIRED",
+        "at": "alert"
+      },
+      "say": "Most checks only match the exact number. Add a suffix, and no alert fires."
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "layout": "center",
+      "beats": [
+        {
+          "text": "Enter Ledger Twins.",
+          "accent": "Ledger Twins",
+          "fx": "split",
+          "at": 0
+        }
+      ],
+      "say": "Enter Ledger Twins."
+    },
+    {
+      "id": "compare",
+      "type": "ui",
+      "frame": "browser",
+      "url": "ledger-twins.local/inbox",
+      "side": {
+        "eyebrow": "Step 1",
+        "title": "Compare what matters",
+        "accent": "what matters",
+        "points": [
+          {
+            "text": "Vendor, amount, line items",
+            "at": "vendor"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Incoming invoices",
+          "sub": "Last quarter, all vendors"
+        },
+        {
+          "type": "table",
+          "id": "inbox",
+          "columns": [
+            "Vendor",
+            "Invoice",
+            "Amount",
+            "Status"
+          ],
+          "rows": [
+            [
+              "Harbor Supply Co.",
+              "HS-4471",
+              "$8,240.00",
+              {
+                "text": "Approved",
+                "tone": "good",
+                "badge": true
+              }
+            ],
+            [
+              "Pinecrest Freight",
+              "PF-0912",
+              "$1,115.50",
+              {
+                "text": "Approved",
+                "tone": "good",
+                "badge": true
+              }
+            ],
+            [
+              "Harbor Supply Co.",
+              "HS-4471-B",
+              "$8,240.00",
+              {
+                "text": "Queued",
+                "badge": true
+              }
+            ]
+          ],
+          "states": [
+            {
+              "at": "number",
+              "row": 2,
+              "set": {
+                "cells": [
+                  "Harbor Supply Co.",
+                  "HS-4471-B",
+                  "$8,240.00",
+                  {
+                    "text": "Likely twin",
+                    "tone": "bad",
+                    "badge": true
+                  }
+                ],
+                "tone": "bad"
+              }
+            }
+          ]
+        }
+      ],
+      "spotlight": [
+        {
+          "at": "number",
+          "target": "inbox.row2"
+        }
+      ],
+      "notes": [
+        {
+          "at": "number",
+          "target": "inbox.row2",
+          "text": "Same vendor, amount and 4 of 4 lines",
+          "side": "bottom"
+        }
+      ],
+      "say": "It compares each new invoice by vendor, amount and line items, not just the number."
+    },
+    {
+      "id": "hold",
+      "type": "ui",
+      "frame": "browser",
+      "url": "ledger-twins.local/review/hs-4471-b",
+      "side": {
+        "eyebrow": "Step 2",
+        "title": "Hold before it pays",
+        "accent": "before it pays",
+        "points": [
+          {
+            "text": "Side by side, one click",
+            "at": "click"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Possible duplicate",
+          "sub": "HS-4471-B vs HS-4471",
+          "actions": [
+            "Release",
+            "Reject"
+          ]
+        },
+        {
+          "type": "row",
+          "children": [
+            {
+              "type": "kv",
+              "id": "orig",
+              "pairs": [
+                {
+                  "k": "Invoice",
+                  "v": "HS-4471"
+                },
+                {
+                  "k": "Amount",
+                  "v": "$8,240.00"
+                },
+                {
+                  "k": "Lines",
+                  "v": "4"
+                }
+              ]
+            },
+            {
+              "type": "kv",
+              "id": "twin",
+              "pairs": [
+                {
+                  "k": "Invoice",
+                  "v": "HS-4471-B"
+                },
+                {
+                  "k": "Amount",
+                  "v": "$8,240.00"
+                },
+                {
+                  "k": "Lines",
+                  "v": "4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "toast",
+          "id": "done",
+          "title": "Payment held",
+          "at": "click"
+        }
+      ],
+      "cursor": [
+        {
+          "at": "click",
+          "to": "head.action1"
+        }
+      ],
+      "say": "A likely twin is held before the payment run, shown side by side. One click releases it or rejects it."
+    },
+    {
+      "id": "proof",
+      "type": "metric",
+      "style": "ring",
+      "eyebrow": "On the demo ledger",
+      "metrics": [
+        {
+          "label": "Planted duplicates caught",
+          "from": 0,
+          "to": 6,
+          "max": 6,
+          "at": "catches"
+        },
+        {
+          "label": "False holds",
+          "from": 0,
+          "to": 0,
+          "at": "zero"
+        }
+      ],
+      "say": "On the demo ledger, it catches all 6 planted duplicates, with zero false holds."
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "card",
+      "headline": "Pay every bill once.",
+      "accent": "once",
+      "say": "Ledger Twins. Pay every bill once. A standalone demo, open source on GitHub."
+    }
+  ]
+}

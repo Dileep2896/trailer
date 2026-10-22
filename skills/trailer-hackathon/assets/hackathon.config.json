@@ -1,0 +1,757 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Dileep2896/trailer/main/engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "Rampwise",
+  "tagline": "Every curb, checked before you go.",
+  "repoUrl": "https://github.com/your-team/rampwise",
+  "link": {
+    "text": "Demo at table 12"
+  },
+  "credit": {
+    "text": "Built at [FILL: event] by [FILL: team]"
+  },
+  "aspect": "16:9",
+  "targetSeconds": 60,
+  "voice": {
+    "provider": "deepgram",
+    "model": "aura-2-hermes-en",
+    "speed": 1
+  },
+  "narration": {
+    "person": "third"
+  },
+  "meta": {
+    "useCase": "hackathon",
+    "format": "F18 Speedrun",
+    "formatWhy": "[FILL: why the format fits, e.g. the core loop is three quick steps (scan, map, route), so each step reads as a split of one run]",
+    "tone": "fast, warm, plain",
+    "sources": [
+      {
+        "claim": "4 curbs without a ramp on the route",
+        "source": "[FILL: seed data file:line]"
+      },
+      {
+        "claim": "37 of 39 missing ramps caught",
+        "source": "[FILL: test fixture or eval output, file:line]"
+      }
+    ]
+  },
+  "forbiddenTerms": [],
+  "theme": {
+    "mode": "dark",
+    "bg": "#0c1017",
+    "surface": "#151b26",
+    "ink": "#eef3f8",
+    "muted": "#98a4b5",
+    "accent": "#c6ff3d",
+    "accent2": "#4cc9f0",
+    "warn": "#ff5c7a",
+    "fonts": {
+      "display": "Space Grotesk",
+      "ui": "Inter",
+      "mono": "JetBrains Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 700,
+    "tracking": -0.03,
+    "radius": 14,
+    "background": "grid",
+    "chrome": "minimal",
+    "transition": "flash",
+    "motion": "snappy",
+    "camera": "push",
+    "type": "giant-kinetic",
+    "motif": "scoreboard",
+    "grain": 0.03,
+    "rhythm": "mono"
+  },
+  "music": {
+    "bpm": 124,
+    "mood": "driving"
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "box",
+    "size": 54,
+    "fontRole": "ui",
+    "weight": 700,
+    "maxWords": 5
+  },
+  "app": {
+    "font": "Inter",
+    "mono": "JetBrains Mono",
+    "bg": "#f6f7f9",
+    "surface": "#ffffff",
+    "subtle": "#eef1f5",
+    "ink": "#141a22",
+    "muted": "#5f6b7a",
+    "border": "#dde3ea",
+    "accent": "#2563eb",
+    "onAccent": "#ffffff",
+    "good": "#15803d",
+    "bad": "#c2410c",
+    "warn": "#b45309",
+    "radius": 12,
+    "size": 24,
+    "dark": false
+  },
+  "scenes": [
+    {
+      "id": "problem",
+      "type": "title",
+      "layout": "hud",
+      "title": "RUN 01 · CURB CHECK",
+      "lines": [
+        "ROUTE   home → clinic",
+        "RAMPS   unknown",
+        "MAP     shows none"
+      ],
+      "breath": 0.5,
+      "say": "Four curbs on Maria's route to the clinic have no ramp. She finds out at the curb."
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "transition": "flash",
+      "captions": "off",
+      "beats": [
+        {
+          "text": "Rampwise",
+          "accent": "Rampwise",
+          "fx": "punch",
+          "at": 0
+        },
+        {
+          "text": "maps them first.",
+          "fx": "rise",
+          "at": "maps"
+        }
+      ],
+      "breath": 0.4,
+      "say": "Rampwise maps every curb before she leaves."
+    },
+    {
+      "id": "demo-scan",
+      "type": "ui",
+      "frame": "phone",
+      "transition": "push",
+      "side": {
+        "eyebrow": "Split 1",
+        "title": "Snap the corner",
+        "accent": "Snap",
+        "points": [
+          {
+            "text": "Ramp, no ramp, blocked",
+            "at": "tagged"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Elm St & 3rd",
+          "sub": "Scan each corner"
+        },
+        {
+          "type": "button",
+          "id": "scan",
+          "label": "Scan corner"
+        },
+        {
+          "type": "list",
+          "id": "curbs",
+          "at": "tagged",
+          "items": [
+            {
+              "title": "NE corner",
+              "badge": {
+                "text": "Ramp",
+                "tone": "good"
+              }
+            },
+            {
+              "title": "NW corner",
+              "badge": {
+                "text": "No ramp",
+                "tone": "bad"
+              },
+              "tone": "bad"
+            },
+            {
+              "title": "SW corner",
+              "badge": {
+                "text": "Blocked",
+                "tone": "warn"
+              },
+              "tone": "warn"
+            },
+            {
+              "title": "SE corner",
+              "badge": {
+                "text": "Ramp",
+                "tone": "good"
+              }
+            }
+          ]
+        }
+      ],
+      "cursor": [
+        {
+          "at": "Point",
+          "to": "scan"
+        }
+      ],
+      "spotlight": [
+        {
+          "at": "blocked",
+          "target": "curbs.item1"
+        }
+      ],
+      "notes": [
+        {
+          "at": "blocked",
+          "target": "curbs.item1",
+          "text": "Missing ramp, flagged",
+          "side": "bottom"
+        }
+      ],
+      "breath": 0.9,
+      "say": "Point a phone at the corner. Every curb gets tagged: ramp, no ramp, or blocked."
+    },
+    {
+      "id": "demo-map",
+      "type": "ui",
+      "frame": "browser",
+      "url": "rampwise.local/map",
+      "title": "Rampwise",
+      "transition": "flash",
+      "poster": true,
+      "side": {
+        "eyebrow": "Split 2",
+        "title": "One shared map",
+        "accent": "shared"
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Neighbourhood map",
+          "sub": "Every scan, in one place"
+        },
+        {
+          "type": "row",
+          "widths": [
+            0.55,
+            0.45
+          ],
+          "children": [
+            {
+              "type": "shapes",
+              "id": "map",
+              "view": [
+                100,
+                70
+              ],
+              "bg": "subtle",
+              "items": [
+                {
+                  "kind": "line",
+                  "points": [
+                    [
+                      0,
+                      20
+                    ],
+                    [
+                      100,
+                      20
+                    ]
+                  ],
+                  "stroke": "border",
+                  "width": 2.4,
+                  "at": 0
+                },
+                {
+                  "kind": "line",
+                  "points": [
+                    [
+                      0,
+                      50
+                    ],
+                    [
+                      100,
+                      50
+                    ]
+                  ],
+                  "stroke": "border",
+                  "width": 2.4,
+                  "at": 0
+                },
+                {
+                  "kind": "line",
+                  "points": [
+                    [
+                      30,
+                      0
+                    ],
+                    [
+                      30,
+                      70
+                    ]
+                  ],
+                  "stroke": "border",
+                  "width": 2.4,
+                  "at": 0
+                },
+                {
+                  "kind": "line",
+                  "points": [
+                    [
+                      70,
+                      0
+                    ],
+                    [
+                      70,
+                      70
+                    ]
+                  ],
+                  "stroke": "border",
+                  "width": 2.4,
+                  "at": 0
+                },
+                {
+                  "kind": "dot",
+                  "name": "elm",
+                  "x": 30,
+                  "y": 20,
+                  "r": 3,
+                  "fill": "bad",
+                  "stroke": "bad",
+                  "pulse": true,
+                  "at": "lands"
+                },
+                {
+                  "kind": "dot",
+                  "x": 70,
+                  "y": 20,
+                  "r": 3,
+                  "fill": "good",
+                  "stroke": "good",
+                  "at": "lands"
+                },
+                {
+                  "kind": "dot",
+                  "x": 30,
+                  "y": 50,
+                  "r": 3,
+                  "fill": "warn",
+                  "stroke": "warn",
+                  "at": "shared"
+                },
+                {
+                  "kind": "dot",
+                  "x": 70,
+                  "y": 50,
+                  "r": 3,
+                  "fill": "good",
+                  "stroke": "good",
+                  "at": "shared"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "id": "worst",
+              "at": "rise",
+              "items": [
+                {
+                  "title": "Elm St & 3rd",
+                  "sub": "2 corners missing a ramp",
+                  "badge": {
+                    "text": "Worst",
+                    "tone": "bad"
+                  },
+                  "tone": "bad"
+                },
+                {
+                  "title": "Oak Ave & 5th",
+                  "sub": "1 corner blocked",
+                  "badge": {
+                    "text": "Fix soon",
+                    "tone": "warn"
+                  }
+                },
+                {
+                  "title": "Pine St & 2nd",
+                  "sub": "All corners clear",
+                  "badge": {
+                    "text": "Clear",
+                    "tone": "good"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "camera": [
+        {
+          "at": "rise",
+          "focus": "worst",
+          "zoom": 1.2
+        }
+      ],
+      "spotlight": [
+        {
+          "at": "top",
+          "target": "worst.item0"
+        }
+      ],
+      "breath": 0.9,
+      "say": "Each scan lands on a shared map, and the corners with missing ramps rise to the top."
+    },
+    {
+      "id": "demo-route",
+      "type": "ui",
+      "frame": "phone",
+      "transition": "push",
+      "side": {
+        "eyebrow": "Split 3",
+        "title": "A step-free route",
+        "accent": "step-free",
+        "points": [
+          {
+            "text": "Avoids every flagged corner",
+            "at": "around"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Home → Clinic",
+          "sub": "Step-free route"
+        },
+        {
+          "type": "list",
+          "id": "steps",
+          "items": [
+            {
+              "title": "Head north on Pine St",
+              "badge": {
+                "text": "Clear",
+                "tone": "good"
+              }
+            },
+            {
+              "title": "Cross at Elm St & 3rd",
+              "badge": {
+                "text": "No ramp",
+                "tone": "bad"
+              },
+              "tone": "bad"
+            },
+            {
+              "title": "Cross at Pine St & 2nd",
+              "badge": {
+                "text": "Ramp",
+                "tone": "good"
+              }
+            },
+            {
+              "title": "Arrive at the clinic",
+              "badge": {
+                "text": "Done",
+                "tone": "good"
+              }
+            }
+          ],
+          "states": [
+            {
+              "at": "around",
+              "item": 1,
+              "set": {
+                "strike": true,
+                "dim": true
+              }
+            }
+          ]
+        },
+        {
+          "type": "toast",
+          "id": "rerouted",
+          "at": "every",
+          "title": "Rerouted",
+          "sub": "Skips the corner with no ramp"
+        }
+      ],
+      "highlight": [
+        {
+          "at": "every",
+          "target": "steps.item2"
+        }
+      ],
+      "breath": 0.9,
+      "say": "Then her route bends around them, so every crossing on the way has a ramp."
+    },
+    {
+      "id": "how",
+      "type": "ui",
+      "frame": "none",
+      "transition": "dissolve",
+      "side": {
+        "eyebrow": "How it works",
+        "title": "Photo in, safe route out",
+        "accent": "safe route"
+      },
+      "elements": [
+        {
+          "type": "shapes",
+          "id": "flow",
+          "view": [
+            100,
+            36
+          ],
+          "items": [
+            {
+              "kind": "rect",
+              "x": 2,
+              "y": 12,
+              "w": 18,
+              "h": 12,
+              "fill": "surface",
+              "stroke": "border",
+              "width": 0.4,
+              "at": 0
+            },
+            {
+              "kind": "text",
+              "text": "Photo",
+              "x": 11,
+              "y": 19,
+              "anchor": "middle",
+              "size": 2.6,
+              "at": 0
+            },
+            {
+              "kind": "line",
+              "points": [
+                [
+                  20,
+                  18
+                ],
+                [
+                  27,
+                  18
+                ]
+              ],
+              "stroke": "muted",
+              "width": 0.5,
+              "draw": true,
+              "at": "vision"
+            },
+            {
+              "kind": "rect",
+              "x": 27,
+              "y": 12,
+              "w": 20,
+              "h": 12,
+              "fill": "surface",
+              "stroke": "accent",
+              "width": 0.6,
+              "at": "vision"
+            },
+            {
+              "kind": "text",
+              "text": "Vision model",
+              "x": 37,
+              "y": 19,
+              "anchor": "middle",
+              "size": 2.6,
+              "at": "vision"
+            },
+            {
+              "kind": "line",
+              "points": [
+                [
+                  47,
+                  18
+                ],
+                [
+                  54,
+                  18
+                ]
+              ],
+              "stroke": "muted",
+              "width": 0.5,
+              "draw": true,
+              "at": "labels"
+            },
+            {
+              "kind": "rect",
+              "x": 54,
+              "y": 12,
+              "w": 18,
+              "h": 12,
+              "fill": "surface",
+              "stroke": "border",
+              "width": 0.4,
+              "at": "labels"
+            },
+            {
+              "kind": "text",
+              "text": "Curb tags",
+              "x": 63,
+              "y": 19,
+              "anchor": "middle",
+              "size": 2.6,
+              "at": "labels"
+            },
+            {
+              "kind": "line",
+              "points": [
+                [
+                  72,
+                  18
+                ],
+                [
+                  79,
+                  18
+                ]
+              ],
+              "stroke": "muted",
+              "width": 0.5,
+              "draw": true,
+              "at": "routing"
+            },
+            {
+              "kind": "rect",
+              "x": 79,
+              "y": 12,
+              "w": 19,
+              "h": 12,
+              "fill": "surface",
+              "stroke": "accent",
+              "width": 0.6,
+              "at": "routing"
+            },
+            {
+              "kind": "text",
+              "text": "Router",
+              "x": 88.5,
+              "y": 19,
+              "anchor": "middle",
+              "size": 2.6,
+              "at": "routing"
+            },
+            {
+              "kind": "dot",
+              "x": 11,
+              "y": 7,
+              "r": 1.4,
+              "fill": "accent",
+              "at": 0,
+              "move": [
+                {
+                  "at": "vision",
+                  "x": 37
+                },
+                {
+                  "at": "labels",
+                  "x": 63
+                },
+                {
+                  "at": "routing",
+                  "x": 88.5
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "breath": 0.7,
+      "say": "Under the hood, a vision model labels each curb, and a routing layer steers around the bad ones."
+    },
+    {
+      "id": "proof",
+      "type": "metric",
+      "style": "ring",
+      "transition": "zoom",
+      "eyebrow": "Test set · photos in the repo",
+      "metrics": [
+        {
+          "label": "Missing ramps caught",
+          "from": 0,
+          "to": 37,
+          "max": 39,
+          "suffix": " of 39",
+          "at": "caught"
+        }
+      ],
+      "breath": 1,
+      "say": "On its test photos, it caught 37 of 39 missing ramps."
+    },
+    {
+      "id": "next",
+      "type": "kinetic",
+      "transition": "push",
+      "beats": [
+        {
+          "text": "Next:",
+          "fx": "rise",
+          "at": 0
+        },
+        {
+          "text": "reports file themselves.",
+          "accent": "themselves",
+          "fx": "rise",
+          "at": "files"
+        }
+      ],
+      "breath": 0.5,
+      "say": "Next, it files every missing ramp with the city, automatically."
+    },
+    {
+      "id": "team",
+      "type": "outro",
+      "layout": "scoreboard",
+      "bug": "PB",
+      "headline": "PERSONAL BEST",
+      "tagline": "Every curb, checked before you go.",
+      "transition": "iris",
+      "say": "Rampwise. Every curb, checked before you go."
+    }
+  ],
+  "cuts": {
+    "short": {
+      "aspect": "9:16",
+      "scenes": [
+        "problem",
+        "turn",
+        "demo-scan",
+        "proof",
+        "team"
+      ],
+      "targetSeconds": 26,
+      "fitSeconds": 28,
+      "overrides": {
+        "problem": {
+          "say": [
+            "Four curbs on her route have no ramp.",
+            "She finds out at the curb."
+          ]
+        },
+        "team": {
+          "loop": true
+        }
+      },
+      "captions": {
+        "size": 66,
+        "maxWords": 3,
+        "position": "center-low"
+      }
+    }
+  }
+}

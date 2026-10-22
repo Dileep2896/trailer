@@ -1,0 +1,14 @@
+{
+  "name": "trailer",
+  "displayName": "Trailer",
+  "version": "0.1.0",
+  "description": "Turn any software project into a voiced, captioned explainer film (16:9) or vertical and square shorts (9:16, 1:1). Reads the repo, picks a narrative format, rebuilds the UI in the app's own design tokens, narrates, captions and renders locally with Remotion.",
+  "author": {
+    "name": "Dileep Kumar Sharma",
+    "url": "https://github.com/Dileep2896"
+  },
+  "homepage": "https://github.com/Dileep2896/trailer",
+  "repository": "https://github.com/Dileep2896/trailer",
+  "license": "MIT",
+  "keywords": ["video", "remotion", "explainer", "launch", "demo", "portfolio", "hackathon", "shorts", "captions", "tts"]
+}

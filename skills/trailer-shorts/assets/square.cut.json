@@ -1,0 +1,14 @@
+{
+  "square": {
+    "aspect": "1:1",
+    "scenes": ["hook", "pain", "turn", "demo", "proof", "end"],
+    "targetSeconds": 35,
+    "fitSeconds": 38,
+    "captions": { "position": "bottom", "style": "box", "size": 56, "weight": 700, "case": "none", "maxWords": 4 },
+    "overrides": {
+      "hook": { "lead": 0, "transition": "cut" },
+      "turn": { "turn": true },
+      "end": { "loop": true }
+    }
+  }
+}

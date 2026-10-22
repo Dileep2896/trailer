@@ -1,0 +1,8 @@
+# trailer: generated and private files
+out/
+voice/
+shots/
+review/
+.stage/
+private/
+.env

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/Dileep2896/trailer/security/advisories/new
+    about: Please report security problems privately, not in a public issue.
+  - name: Remotion license questions
+    url: https://www.remotion.dev/license
+    about: trailer renders with Remotion, which has its own license. Questions about it go to Remotion.

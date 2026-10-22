@@ -1,0 +1,430 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Dileep2896/trailer/main/engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "Your Project",
+  "tagline": "[FILL: one line on what it does, for whom]",
+  "repoUrl": "https://github.com/your-handle/your-project",
+  "aspect": "16:9",
+  "targetSeconds": 60,
+  "narration": {
+    "person": "third"
+  },
+  "meta": {
+    "useCase": "explainer",
+    "format": "[FILL: a format from formats.md]",
+    "formatWhy": "[FILL: one sentence on why that format fits the problem]",
+    "tone": "[FILL: three words for the tone]",
+    "sources": [
+      {
+        "claim": "3 product moves shown",
+        "source": "[FILL: file:line, README section or commit for every number]"
+      }
+    ],
+    "notes": "Starter: every scene shows the default act structure with placeholder copy. Replace every line, number and token from brief.md, then delete this note."
+  },
+  "voice": {
+    "provider": "deepgram",
+    "model": "aura-2-hermes-en",
+    "speed": 1
+  },
+  "theme": {
+    "mode": "dark",
+    "bg": "#0d1117",
+    "surface": "#161b22",
+    "ink": "#e9eef5",
+    "muted": "#9aa5b1",
+    "accent": "#5b8cff",
+    "accent2": "#8a6cff",
+    "warn": "#ff6b6b",
+    "fonts": {
+      "display": "Inter Tight",
+      "ui": "Inter",
+      "mono": "JetBrains Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 800,
+    "tracking": -0.03,
+    "radius": 16,
+    "background": "grid",
+    "chrome": "minimal",
+    "transition": "push",
+    "motion": "smooth",
+    "camera": "drift",
+    "type": "giant-kinetic",
+    "motif": "none",
+    "grain": 0.04,
+    "rhythm": "mono"
+  },
+  "app": {
+    "font": "Inter",
+    "mono": "JetBrains Mono",
+    "bg": "#ffffff",
+    "surface": "#ffffff",
+    "subtle": "#f3f4f6",
+    "ink": "#111827",
+    "muted": "#6b7280",
+    "border": "#e5e7eb",
+    "accent": "#2563eb",
+    "onAccent": "#ffffff",
+    "good": "#16a34a",
+    "bad": "#dc2626",
+    "warn": "#d97706",
+    "radius": 10,
+    "size": 22,
+    "dark": false
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "box",
+    "size": 50,
+    "fontRole": "ui",
+    "weight": 700,
+    "maxWords": 6
+  },
+  "music": {
+    "bpm": 108,
+    "mood": "warm"
+  },
+  "forbiddenTerms": [
+    "revolutionary",
+    "game-changing",
+    "seamless",
+    "leverage",
+    "cutting-edge"
+  ],
+  "scenes": [
+    {
+      "id": "open",
+      "type": "title",
+      "layout": "card",
+      "eyebrow": "Act one: the hook",
+      "title": "A moment. A person. One number.",
+      "accent": "One number.",
+      "say": "Every film opens on a moment: a person, a place, and one number.",
+      "breath": 0.6
+    },
+    {
+      "id": "pain",
+      "type": "evidence",
+      "layout": "row",
+      "eyebrow": "Act two: the pain",
+      "cards": [
+        {
+          "kind": "headline",
+          "meta": "WHAT BREAKS",
+          "text": "One concrete example, from the seed data",
+          "source": "the project's own fixtures",
+          "at": "breaks"
+        },
+        {
+          "kind": "stat",
+          "value": "14 s",
+          "text": "of pain, at least, before any product UI",
+          "at": "fails"
+        }
+      ],
+      "say": "Then the pain lands. Who hurts, what breaks, and why today's fix fails.",
+      "breath": 0.8
+    },
+    {
+      "id": "today",
+      "type": "split",
+      "mode": "versus",
+      "divider": "line",
+      "left": {
+        "label": "TODAY",
+        "tone": "bad",
+        "title": "By hand, every time",
+        "emoji": "weary-face",
+        "verdict": {
+          "text": "SLOW",
+          "at": "concretely"
+        }
+      },
+      "right": {
+        "label": "THE COST",
+        "tone": "neutral",
+        "title": "Hours nobody gets back",
+        "emoji": "hourglass-not-done"
+      },
+      "say": "Show it concretely, before the product appears on screen."
+    },
+    {
+      "id": "feeling",
+      "type": "cast",
+      "stage": "floor",
+      "headline": {
+        "text": "One narrator. Many reactions.",
+        "accent": "reactions",
+        "position": "top"
+      },
+      "cast": [
+        {
+          "who": "blob",
+          "shape": "doc",
+          "x": 960,
+          "size": 340,
+          "mood": "worried",
+          "at": 0,
+          "enter": "pop",
+          "moods": [
+            {
+              "at": "narrator",
+              "mood": "surprised"
+            }
+          ],
+          "react": [
+            {
+              "at": "talking",
+              "kind": "bounce"
+            }
+          ]
+        }
+      ],
+      "say": "A character can carry the feeling, but the narrator does the talking."
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "captions": "off",
+      "beats": [
+        {
+          "text": "Enter Your Project.",
+          "accent": "Your Project",
+          "fx": "punch",
+          "at": 0
+        },
+        {
+          "text": "The drums come in.",
+          "accent": "drums",
+          "fx": "mask",
+          "at": "drums"
+        }
+      ],
+      "say": "Then the turn. The project is named, and the drums come in.",
+      "breath": 0.4
+    },
+    {
+      "id": "step1",
+      "type": "ui",
+      "frame": "browser",
+      "url": "localhost:3000/queue",
+      "poster": true,
+      "side": {
+        "eyebrow": "Act three: how it works",
+        "title": "The real interface, rebuilt",
+        "accent": "rebuilt",
+        "points": [
+          {
+            "text": "Its own colors and fonts",
+            "at": "colors"
+          },
+          {
+            "text": "A cursor and a callout",
+            "at": "callout"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Queue",
+          "sub": "Seed data, never lorem ipsum",
+          "actions": [
+            "Run check"
+          ]
+        },
+        {
+          "type": "table",
+          "id": "rows",
+          "columns": [
+            "Record",
+            "Owner",
+            "Status"
+          ],
+          "rows": [
+            [
+              "first-record",
+              "Team A",
+              {
+                "text": "Passing",
+                "tone": "good",
+                "badge": true
+              }
+            ],
+            [
+              "second-record",
+              "Team B",
+              {
+                "text": "Queued",
+                "badge": true
+              }
+            ],
+            [
+              "third-record",
+              "Team C",
+              {
+                "text": "Passing",
+                "tone": "good",
+                "badge": true
+              }
+            ]
+          ],
+          "states": [
+            {
+              "at": "callout",
+              "row": 1,
+              "set": {
+                "cells": [
+                  "second-record",
+                  "Team B",
+                  {
+                    "text": "Flagged",
+                    "tone": "bad",
+                    "badge": true
+                  }
+                ],
+                "tone": "bad"
+              }
+            }
+          ]
+        }
+      ],
+      "cursor": [
+        {
+          "at": "cursor",
+          "to": "head.action0"
+        }
+      ],
+      "spotlight": [
+        {
+          "at": "callout",
+          "target": "rows.row1"
+        }
+      ],
+      "notes": [
+        {
+          "at": "callout",
+          "target": "rows.row1",
+          "text": "The one that matters",
+          "side": "bottom"
+        }
+      ],
+      "say": "Each move is the real interface, rebuilt in its own colors, with a cursor and a callout."
+    },
+    {
+      "id": "step2",
+      "type": "ui",
+      "frame": "browser",
+      "url": "localhost:3000/queue/second-record",
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "second-record",
+          "sub": "What changed"
+        },
+        {
+          "type": "diff",
+          "id": "patch",
+          "file": "config.yml",
+          "lines": [
+            {
+              "op": " ",
+              "text": "retries: 3"
+            },
+            {
+              "op": "-",
+              "text": "timeout: 30"
+            },
+            {
+              "op": "+",
+              "text": "timeout: 5"
+            }
+          ]
+        },
+        {
+          "type": "toast",
+          "id": "done",
+          "title": "Fix ready for review",
+          "tone": "good",
+          "at": "voice"
+        }
+      ],
+      "camera": [
+        {
+          "at": "spoken",
+          "focus": "patch",
+          "zoom": 1.4
+        },
+        {
+          "at": "-0.8s",
+          "reset": true
+        }
+      ],
+      "highlight": [
+        {
+          "at": "spoken",
+          "target": "patch.line2"
+        }
+      ],
+      "say": "Every element is cued to a spoken word, so the picture follows the voice."
+    },
+    {
+      "id": "proof",
+      "type": "metric",
+      "style": "ring",
+      "eyebrow": "Act four: the proof",
+      "metrics": [
+        {
+          "label": "Product moves shown",
+          "from": 0,
+          "to": 3,
+          "max": 3,
+          "at": "digits"
+        }
+      ],
+      "verdict": {
+        "text": "Every number has a source.",
+        "accent": "source",
+        "at": "source"
+      },
+      "say": "Then one measured number, written as digits, with its source in the script.",
+      "breath": 1
+    },
+    {
+      "id": "compare",
+      "type": "split",
+      "mode": "before-after",
+      "left": {
+        "label": "BEFORE",
+        "tone": "bad",
+        "title": "A wall of rows",
+        "emoji": "face-with-spiral-eyes"
+      },
+      "right": {
+        "label": "AFTER",
+        "tone": "good",
+        "title": "The one that matters",
+        "emoji": "light-bulb",
+        "at": "after",
+        "verdict": {
+          "text": "CLEAR",
+          "at": "frame"
+        }
+      },
+      "say": "Before and after, side by side, in the same frame."
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "card",
+      "headline": "Replace every line.",
+      "accent": "every line",
+      "nameAt": "Project",
+      "say": "Your Project. Open source on GitHub."
+    }
+  ]
+}

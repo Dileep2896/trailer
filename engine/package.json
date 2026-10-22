@@ -1,0 +1,46 @@
+{
+  "name": "trailer-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Config-driven Remotion engine that turns a trailer.config.json into a voiced, captioned explainer film or vertical short (16:9, 9:16, 1:1).",
+  "license": "MIT",
+  "author": "Dileep Kumar Sharma",
+  "homepage": "https://github.com/Dileep2896/trailer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dileep2896/trailer.git",
+    "directory": "engine"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "make": "node trailer.mjs",
+    "smoke": "node trailer.mjs ../examples/driftcheck --voice-engine none --frames 0-150",
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "schema": "node scripts/gen-schema.mjs",
+    "studio": "remotion studio src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.534",
+    "@remotion/cli": "4.0.534",
+    "@remotion/google-fonts": "4.0.534",
+    "@remotion/layout-utils": "4.0.534",
+    "@remotion/renderer": "4.0.534",
+    "ajv": "8.20.0",
+    "playwright": "1.64.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.534"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  },
+  "bin": {
+    "trailer": "trailer.mjs"
+  }
+}

@@ -1,0 +1,53 @@
+name: Format proposal
+description: Propose a new narrative format for the formats library (skills/trailer/references/formats.md).
+title: "[format] "
+labels: ["format", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A format is a narrative device (how the film opens, explains, shows the pain, shows the product and ends), not a new colour scheme.
+        Use a **made-up project** for the example. Never use a real company, product or person.
+  - type: input
+    id: name
+    attributes:
+      label: Format name
+      placeholder: "Lost and Found"
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: Fits when...
+      description: The shape of problem this metaphor explains, and why the existing 20 formats don't cover it.
+    validations:
+      required: true
+  - type: textarea
+    id: arc
+    attributes:
+      label: Arc with timings (60 s)
+      description: Opener, pain, turn, how it works, proof, end.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: recipe
+    attributes:
+      label: Scene recipe
+      description: The ordered engine scene types and layouts (for example `title(stamp) -> evidence -> split -> kinetic(turn) -> ui -> ui -> metric -> outro(folder)`).
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: signature
+    attributes:
+      label: Signature type move and characters
+  - type: textarea
+    id: portrait
+    attributes:
+      label: Portrait (9:16) notes
+  - type: textarea
+    id: example
+    attributes:
+      label: Example on a made-up project
+      description: Two or three narration lines showing the format in use.

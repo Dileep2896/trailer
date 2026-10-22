@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "projectName": "Broken",
+  "theme": {
+    "accent": "#3366ff"
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "type": "kinetic",
+      "beats": [
+        {
+          "text": "Hi."
+        }
+      ],
+      "say": "Broken says hi."
+    }
+  ],
+  "aspect": "4:3",
+  "$expect": "aspect"
+}

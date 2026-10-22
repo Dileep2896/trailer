@@ -1,0 +1,534 @@
+{
+  "$schema": "../../../engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "Driftcheck",
+  "tagline": "Catch config drift before your users do.",
+  "repoUrl": "https://github.com/Dileep2896/trailer/tree/main/examples/driftcheck",
+  "link": {
+    "text": "driftcheck.example",
+    "url": "https://driftcheck.example"
+  },
+  "aspect": "16:9",
+  "targetSeconds": 60,
+  "fitSeconds": 64,
+  "narration": {
+    "person": "third"
+  },
+  "voice": {
+    "provider": "deepgram",
+    "model": "aura-2-hermes-en",
+    "speed": 1.0
+  },
+  "meta": {
+    "useCase": "explainer",
+    "format": "Case File",
+    "formatWhy": "A deploy that passes staging and fails production is a mystery with one hidden culprit: the case-file arc (exhibits, suspects, the reveal) fits it.",
+    "tone": "calm, dry, precise",
+    "sources": [
+      "data/seed.json (every number)",
+      "index.html (the drift page)"
+    ]
+  },
+  "theme": {
+    "mode": "dark",
+    "bg": "#0f1417",
+    "surface": "#172026",
+    "ink": "#eef3f1",
+    "muted": "#93a3a0",
+    "accent": "#2dd4bf",
+    "accent2": "#f59e0b",
+    "warn": "#f87171",
+    "fonts": {
+      "display": "Space Grotesk",
+      "ui": "Inter",
+      "mono": "JetBrains Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 700,
+    "tracking": -0.03,
+    "radius": 16,
+    "background": "noise-glow",
+    "chrome": "minimal",
+    "transition": "push",
+    "motion": "smooth",
+    "camera": "drift",
+    "motif": "none",
+    "grain": 0.05,
+    "rhythm": "mono"
+  },
+  "app": {
+    "font": "Inter",
+    "mono": "JetBrains Mono",
+    "bg": "#f5f6f8",
+    "surface": "#ffffff",
+    "subtle": "#f9fafb",
+    "ink": "#111827",
+    "muted": "#5f6b7a",
+    "border": "#e3e7ec",
+    "accent": "#0f9d8a",
+    "good": "#16a34a",
+    "bad": "#dc2626",
+    "warn": "#d97706",
+    "radius": 12
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "box",
+    "fontRole": "ui"
+  },
+  "music": {
+    "bpm": 96,
+    "mood": "tense"
+  },
+  "capture": {
+    "width": 1280,
+    "height": 760,
+    "pages": [
+      {
+        "name": "drift",
+        "image": "assets/drift.png",
+        "scale": 2,
+        "boxes": [
+          {
+            "name": "missing",
+            "x": 255,
+            "y": 257,
+            "width": 990,
+            "height": 45
+          },
+          {
+            "name": "flag",
+            "x": 255,
+            "y": 348,
+            "width": 990,
+            "height": 45
+          },
+          {
+            "name": "secret",
+            "x": 255,
+            "y": 394,
+            "width": 990,
+            "height": 45
+          },
+          {
+            "name": "drifted",
+            "x": 757,
+            "y": 109,
+            "width": 238,
+            "height": 89
+          },
+          {
+            "name": "missing-values",
+            "x": 700,
+            "y": 257,
+            "width": 545,
+            "height": 45
+          },
+          {
+            "name": "flag-values",
+            "x": 700,
+            "y": 348,
+            "width": 545,
+            "height": 45
+          },
+          {
+            "name": "secret-values",
+            "x": 700,
+            "y": 394,
+            "width": 545,
+            "height": 45
+          }
+        ]
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "open",
+      "type": "title",
+      "layout": "stamp",
+      "eyebrow": "Incident 0611",
+      "title": "Green in staging",
+      "accent": "staging",
+      "stamp": "DOWN IN PROD",
+      "stampAt": "checkout",
+      "say": "Friday, six p.m. The release passed every check in staging. Twenty minutes later, checkout is down in production."
+    },
+    {
+      "id": "evidence",
+      "type": "evidence",
+      "layout": "wall",
+      "transition": "flash",
+      "eyebrow": "Exhibits",
+      "cards": [
+        {
+          "kind": "headline",
+          "meta": "INCIDENT LOG",
+          "text": "Checkout failing for 41 minutes",
+          "source": "status page, Friday 18:22",
+          "at": 0
+        },
+        {
+          "kind": "post",
+          "text": "Payments time out in prod. Same build is fine in staging?",
+          "source": "on-call channel",
+          "at": "build"
+        },
+        {
+          "kind": "stat",
+          "value": "0",
+          "text": "code changes between the two",
+          "source": "deploy diff",
+          "at": "nobody"
+        }
+      ],
+      "stamp": {
+        "text": "SAME BUILD",
+        "at": "nobody"
+      },
+      "say": "Same code, same build. Something else is different, and nobody can see it."
+    },
+    {
+      "id": "diff",
+      "type": "split",
+      "mode": "versus",
+      "divider": "vs",
+      "transition": "iris",
+      "left": {
+        "label": "STAGING",
+        "tone": "good",
+        "title": "payments.yaml",
+        "elements": [
+          {
+            "type": "kv",
+            "pairs": [
+              [
+                "PAYMENTS_TIMEOUT_MS",
+                "8000"
+              ],
+              [
+                "PAYMENTS_RETRY_LIMIT",
+                "3"
+              ]
+            ]
+          }
+        ],
+        "stat": {
+          "value": 8,
+          "from": 0,
+          "suffix": " s",
+          "label": "timeout"
+        }
+      },
+      "right": {
+        "label": "PRODUCTION",
+        "tone": "bad",
+        "title": "payments.yaml",
+        "elements": [
+          {
+            "type": "kv",
+            "pairs": [
+              {
+                "k": "PAYMENTS_TIMEOUT_MS",
+                "v": "not set",
+                "tone": "bad"
+              },
+              [
+                "PAYMENTS_RETRY_LIMIT",
+                "3"
+              ]
+            ]
+          }
+        ],
+        "stat": {
+          "value": 2,
+          "from": 0,
+          "suffix": " s",
+          "label": "default timeout",
+          "tone": "bad"
+        },
+        "verdict": {
+          "text": "MISSING KEY",
+          "at": "gives",
+          "tone": "bad"
+        }
+      },
+      "say": "One setting. Staging waits eight seconds for the payment provider. Production never got the key, so it gives up after two."
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "transition": "zoom",
+      "captions": "off",
+      "beats": [
+        {
+          "text": "Enter Driftcheck.",
+          "accent": "Driftcheck",
+          "fx": "punch",
+          "at": 0
+        }
+      ],
+      "say": "Enter Driftcheck.",
+      "breath": 0.8
+    },
+    {
+      "id": "checks",
+      "type": "ui",
+      "frame": "browser",
+      "url": "driftcheck.local/drift",
+      "sidebar": [
+        "Drift",
+        "Environments",
+        "History",
+        "Settings"
+      ],
+      "side": {
+        "eyebrow": "Before every deploy",
+        "title": "Every key, side by side",
+        "accent": "side by side",
+        "points": [
+          {
+            "text": "3 environments, 312 keys",
+            "at": "every"
+          },
+          {
+            "text": "Drift flagged in red",
+            "at": "lines"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Config drift",
+          "sub": "Every key, every environment.",
+          "actions": [
+            "Check again"
+          ]
+        },
+        {
+          "type": "table",
+          "id": "keys",
+          "columns": [
+            "Key",
+            "Staging",
+            "Production"
+          ],
+          "widths": [
+            2.2,
+            1,
+            1.1
+          ],
+          "rows": [
+            [
+              "PAYMENTS_RETRY_LIMIT",
+              "3",
+              "3"
+            ],
+            [
+              "PAYMENTS_TIMEOUT_MS",
+              "8000",
+              {
+                "text": "not set",
+                "tone": "bad"
+              }
+            ],
+            [
+              "CACHE_TTL_SECONDS",
+              "300",
+              "300"
+            ],
+            [
+              "CHECKOUT_FEATURE_V2",
+              "on",
+              {
+                "text": "off",
+                "tone": "bad"
+              }
+            ]
+          ]
+        }
+      ],
+      "cursor": [
+        {
+          "at": "reads",
+          "to": "head.action0"
+        }
+      ],
+      "highlight": [
+        {
+          "at": "lines",
+          "target": "keys.row1"
+        }
+      ],
+      "notes": [
+        {
+          "at": "side",
+          "target": "keys.row1",
+          "text": "missing in production",
+          "side": "bottom"
+        }
+      ],
+      "say": "Driftcheck reads the config of every environment before a deploy, and lines up every key, side by side."
+    },
+    {
+      "id": "shot",
+      "type": "screenshot",
+      "page": "drift",
+      "frame": "browser",
+      "url": "driftcheck.local/drift",
+      "transition": "slide-stack",
+      "poster": true,
+      "moves": [
+        {
+          "at": "Missing",
+          "focus": "missing",
+          "zoom": 1.7,
+          "spotlight": true,
+          "label": "Missing in production"
+        },
+        {
+          "at": "changed",
+          "focus": "flag",
+          "zoom": 1.7,
+          "spotlight": true,
+          "label": "Changed value"
+        },
+        {
+          "at": "rotation",
+          "focus": "secret",
+          "zoom": 1.7,
+          "spotlight": true,
+          "label": "Secret 94 days old"
+        }
+      ],
+      "say": "Missing keys, changed values and secrets out of rotation are flagged in red, with the file each one came from."
+    },
+    {
+      "id": "result",
+      "type": "metric",
+      "style": "ring",
+      "eyebrow": "The sample project",
+      "metrics": [
+        {
+          "label": "Keys compared",
+          "from": 0,
+          "to": 312,
+          "at": 0
+        },
+        {
+          "label": "Drifted",
+          "from": 0,
+          "to": 4,
+          "max": 312,
+          "strike": false,
+          "at": "four"
+        }
+      ],
+      "say": "In the sample project: three hundred and twelve keys across three environments, and four that drifted."
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "card",
+      "transition": "dissolve",
+      "say": "Driftcheck. Catch config drift before your users do."
+    }
+  ],
+  "cuts": {
+    "short": {
+      "aspect": "9:16",
+      "targetSeconds": 25,
+      "fitSeconds": 27,
+      "scenes": [
+        "open",
+        "diff",
+        "turn",
+        "shot",
+        "end"
+      ],
+      "overrides": {
+        "open": {
+          "say": "Friday deploy. Staging is green. Production is down.",
+          "stampAt": "down"
+        },
+        "diff": {
+          "say": "One missing key: production gives the payment provider two seconds, not eight."
+        },
+        "shot": {
+          "say": "Driftcheck lines up the config of every environment, and flags each drifted key in red before the deploy ships.",
+          "moves": [
+            {
+              "at": "lines",
+              "focus": "missing-values",
+              "zoom": 1.5,
+              "spotlight": true,
+              "label": "Missing in production"
+            },
+            {
+              "at": "flags",
+              "focus": "flag-values",
+              "zoom": 1.5,
+              "spotlight": true,
+              "label": "Changed value"
+            },
+            {
+              "at": "red",
+              "focus": "secret-values",
+              "zoom": 1.5,
+              "spotlight": true,
+              "label": "Secret 94 days old"
+            }
+          ]
+        },
+        "end": {
+          "loop": true
+        }
+      }
+    },
+    "square": {
+      "aspect": "1:1",
+      "targetSeconds": 30,
+      "fitSeconds": 33,
+      "scenes": [
+        "open",
+        "diff",
+        "turn",
+        "checks",
+        "result",
+        "end"
+      ],
+      "overrides": {
+        "open": {
+          "say": "Friday deploy. Staging is green. Checkout is down.",
+          "stampAt": "down"
+        },
+        "diff": {
+          "say": "Staging waits eight seconds for payments. Production never got the key, and gives up after two."
+        },
+        "checks": {
+          "say": "Driftcheck lines up every key of every environment before a deploy, so drift shows up in red.",
+          "cursor": [
+            {
+              "at": "deploy",
+              "to": "head.action0"
+            }
+          ],
+          "notes": [
+            {
+              "at": "red",
+              "target": "keys.row1",
+              "text": "missing in production",
+              "side": "bottom"
+            }
+          ]
+        },
+        "end": {
+          "loop": true
+        }
+      }
+    }
+  }
+}

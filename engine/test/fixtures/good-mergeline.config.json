@@ -1,0 +1,609 @@
+{
+  "version": 1,
+  "projectName": "Mergeline",
+  "tagline": "Pull requests, sorted by risk.",
+  "repoUrl": "https://github.com/your-handle/mergeline",
+  "forbiddenTerms": [
+    "Acme Git",
+    "AcmeCorp"
+  ],
+  "theme": {
+    "mode": "light",
+    "bg": "#fff3df",
+    "surface": "#ffffff",
+    "ink": "#1f1a2e",
+    "muted": "#6c6480",
+    "accent": "#ff5a36",
+    "accent2": "#3d6bff",
+    "warn": "#e5484d",
+    "fonts": {
+      "display": "Fredoka",
+      "ui": "Nunito",
+      "mono": "DM Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 700,
+    "tracking": -0.02,
+    "radius": 28,
+    "background": "dots",
+    "chrome": "mac",
+    "transition": "push",
+    "motion": "bouncy",
+    "camera": "drift",
+    "motif": "none",
+    "grain": 0.03,
+    "rhythm": "mono"
+  },
+  "music": {
+    "bpm": 112,
+    "mood": "playful"
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "pill",
+    "fontRole": "ui"
+  },
+  "fitSeconds": 62,
+  "app": {
+    "font": "Plus Jakarta Sans",
+    "mono": "DM Mono",
+    "bg": "#f7f5ff",
+    "surface": "#ffffff",
+    "subtle": "#faf9ff",
+    "ink": "#1b1740",
+    "muted": "#6b6890",
+    "border": "#e6e2f5",
+    "accent": "#5b4bff",
+    "good": "#12a150",
+    "bad": "#e5484d",
+    "warn": "#e8920c",
+    "radius": 16
+  },
+  "scenes": [
+    {
+      "id": "count",
+      "type": "countdown",
+      "style": "bold",
+      "from": 3,
+      "step": 0.62,
+      "at": "Three",
+      "then": {
+        "text": "MONDAY",
+        "tone": "accent",
+        "at": "Monday"
+      },
+      "cast": [
+        {
+          "who": "blob",
+          "shape": "doc",
+          "color": "#ffd36b",
+          "x": 1480,
+          "size": 230,
+          "mood": "worried",
+          "at": "forty",
+          "react": [
+            {
+              "at": "waiting",
+              "kind": "tremble"
+            }
+          ],
+          "sweat": "waiting"
+        }
+      ],
+      "say": "Three. Two. One. It's Monday, and forty pull requests are waiting."
+    },
+    {
+      "id": "rewind",
+      "type": "rewind",
+      "from": "MON 09:00",
+      "to": "FRI 17:00",
+      "slate": "LAST FRIDAY",
+      "slateAt": "opened",
+      "ghosts": [
+        "40 open",
+        "review?",
+        "LGTM"
+      ],
+      "transition": "glitch",
+      "say": "Rewind to Friday. Every one of them was opened before the weekend."
+    },
+    {
+      "id": "lesson",
+      "type": "chalkboard",
+      "font": "Caveat",
+      "transition": "wipe",
+      "items": [
+        {
+          "kind": "text",
+          "text": "The review queue",
+          "x": 150,
+          "y": 96,
+          "size": 84,
+          "color": "yellow",
+          "at": 0
+        },
+        {
+          "kind": "rect",
+          "x": 150,
+          "y": 400,
+          "w": 220,
+          "h": 120,
+          "at": "change"
+        },
+        {
+          "kind": "rect",
+          "x": 410,
+          "y": 400,
+          "w": 220,
+          "h": 120,
+          "at": "change"
+        },
+        {
+          "kind": "rect",
+          "x": 670,
+          "y": 400,
+          "w": 330,
+          "h": 120,
+          "color": "pink",
+          "at": "change"
+        },
+        {
+          "kind": "arrow",
+          "x": 1040,
+          "y": 460,
+          "w": 230,
+          "h": 0,
+          "at": "human"
+        },
+        {
+          "kind": "text",
+          "text": "1 human",
+          "x": 1300,
+          "y": 410,
+          "size": 96,
+          "at": "human"
+        },
+        {
+          "kind": "text",
+          "text": "typo",
+          "x": 200,
+          "y": 420,
+          "size": 66,
+          "at": "typo"
+        },
+        {
+          "kind": "text",
+          "text": "bump",
+          "x": 455,
+          "y": 420,
+          "size": 66,
+          "at": "bump"
+        },
+        {
+          "kind": "text",
+          "text": "auth rewrite",
+          "x": 700,
+          "y": 428,
+          "size": 58,
+          "color": "pink",
+          "at": "risky"
+        },
+        {
+          "kind": "underline",
+          "x": 150,
+          "y": 558,
+          "w": 480,
+          "h": 4,
+          "color": "blue",
+          "at": "Tiny"
+        },
+        {
+          "kind": "text",
+          "text": "stuck behind it for days",
+          "x": 150,
+          "y": 586,
+          "size": 70,
+          "color": "blue",
+          "at": "queue"
+        }
+      ],
+      "cast": [
+        {
+          "who": "blob",
+          "shape": "note",
+          "color": "#fff07a",
+          "x": 1560,
+          "size": 220,
+          "mood": "sleepy",
+          "at": "Tiny",
+          "pops": [
+            {
+              "at": "risky",
+              "emoji": "sleeping-face"
+            }
+          ]
+        }
+      ],
+      "say": "Here's the problem. Every change waits for a human, even a typo or a bump. Tiny fixes queue behind risky ones."
+    },
+    {
+      "id": "versus",
+      "type": "split",
+      "mode": "versus",
+      "divider": "vs",
+      "transition": "iris",
+      "left": {
+        "label": "TYPO FIX",
+        "tone": "neutral",
+        "stat": {
+          "value": 3.2,
+          "from": 0,
+          "decimals": 1,
+          "suffix": " days",
+          "label": "in the queue"
+        },
+        "cast": [
+          {
+            "who": "open-peeps/sam",
+            "x": 480,
+            "size": 330,
+            "mood": "tired",
+            "at": "typo",
+            "moods": [
+              {
+                "at": "burn",
+                "mood": "frustrated"
+              }
+            ]
+          }
+        ]
+      },
+      "right": {
+        "label": "AUTH REWRITE",
+        "tone": "bad",
+        "stat": {
+          "value": 3.1,
+          "from": 0,
+          "decimals": 1,
+          "suffix": " days",
+          "label": "in the queue"
+        },
+        "cast": [
+          {
+            "who": "open-peeps/leo",
+            "x": 480,
+            "size": 330,
+            "mood": "stressed",
+            "at": "rewrite",
+            "flip": true
+          }
+        ],
+        "verdict": {
+          "text": "SAME LINE",
+          "at": "burn",
+          "tone": "bad"
+        }
+      },
+      "say": "So a typo waits as long as a risky rewrite, and reviewers burn out reading noise."
+    },
+    {
+      "id": "week",
+      "type": "calendar",
+      "transition": "slide-stack",
+      "pileLabel": "{n} still waiting",
+      "pages": [
+        {
+          "day": "MON",
+          "date": "14",
+          "note": "typo fix: waiting",
+          "at": 0
+        },
+        {
+          "day": "TUE",
+          "date": "15",
+          "note": "version bump: waiting",
+          "at": "Tuesday"
+        },
+        {
+          "day": "WED",
+          "date": "16",
+          "note": "test rename: waiting",
+          "at": "Wednesday"
+        },
+        {
+          "day": "THU",
+          "date": "17",
+          "note": "reviewer: 31 unread",
+          "at": "Thursday"
+        }
+      ],
+      "cast": [
+        {
+          "who": "fluent/hourglass-not-done",
+          "x": 1700,
+          "size": 170,
+          "at": "Still",
+          "react": [
+            {
+              "at": "Still",
+              "kind": "spin"
+            }
+          ]
+        }
+      ],
+      "say": "Tuesday. Wednesday. Thursday. Still waiting.",
+      "breath": 0.6
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "layout": "center",
+      "transition": "zoom",
+      "beats": [
+        {
+          "text": "Mergeline changes the order.",
+          "accent": "order",
+          "fx": "split",
+          "at": 0
+        },
+        {
+          "text": "Every PR, read first.",
+          "accent": "first",
+          "fx": "mask",
+          "at": "reads"
+        }
+      ],
+      "cast": [
+        {
+          "who": "blob",
+          "shape": "bot",
+          "color": "#5b4bff",
+          "accessory": "glasses",
+          "x": 1640,
+          "size": 220,
+          "mood": "determined",
+          "at": "reads",
+          "react": [
+            {
+              "at": "first",
+              "kind": "jump"
+            }
+          ]
+        }
+      ],
+      "say": "Mergeline changes the order. It reads every pull request first."
+    },
+    {
+      "id": "sort",
+      "type": "lanes",
+      "source": "incoming pull requests",
+      "scanner": {
+        "label": "RISK"
+      },
+      "transition": "cut",
+      "lanes": [
+        {
+          "label": "auto-merge",
+          "tone": "good"
+        },
+        {
+          "label": "quick look",
+          "tone": "warn"
+        },
+        {
+          "label": "deep review",
+          "tone": "bad"
+        }
+      ],
+      "items": [
+        {
+          "label": "Fix typo in README",
+          "emoji": "sparkles",
+          "lane": 0,
+          "score": "3",
+          "at": 0
+        },
+        {
+          "label": "Bump lint version",
+          "emoji": "rocket",
+          "lane": 0,
+          "score": "8",
+          "at": "score"
+        },
+        {
+          "label": "Rename flaky test",
+          "emoji": "light-bulb",
+          "lane": 1,
+          "score": "21",
+          "at": "Safe"
+        },
+        {
+          "label": "Rewrite auth tokens",
+          "emoji": "warning",
+          "lane": 2,
+          "score": "92",
+          "at": "small"
+        }
+      ],
+      "say": "Each gets a risk score. Safe changes merge themselves, small ones get a quick look, and only risky ones get a deep review.",
+      "breath": 0.8,
+      "headline": {
+        "text": "Sorted by risk, not by arrival.",
+        "accent": "risk",
+        "at": 0
+      }
+    },
+    {
+      "id": "rules",
+      "type": "ui",
+      "frame": "app",
+      "title": "Mergeline \u00b7 Rules",
+      "sideAlign": "right",
+      "transition": "push",
+      "poster": true,
+      "side": {
+        "eyebrow": "Rules",
+        "title": "Teams decide what counts as safe",
+        "accent": "safe",
+        "points": [
+          {
+            "text": "Safe paths auto-merge",
+            "at": "paths"
+          },
+          {
+            "text": "Two approvals where it matters",
+            "at": "approvals"
+          },
+          {
+            "text": "You set the size limit",
+            "at": "small"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Review rules",
+          "sub": "What counts as safe in this repo"
+        },
+        {
+          "type": "toggle",
+          "id": "toggles",
+          "items": [
+            {
+              "label": "Auto-merge docs and typos",
+              "sub": "docs/**, *.md",
+              "value": true
+            },
+            {
+              "label": "Two approvals for auth code",
+              "sub": "src/auth/**",
+              "value": false
+            },
+            {
+              "label": "Small means under 20 lines",
+              "sub": "quick look lane",
+              "value": true
+            }
+          ],
+          "states": [
+            {
+              "at": "approvals",
+              "item": 1,
+              "set": {
+                "value": true
+              }
+            }
+          ]
+        },
+        {
+          "type": "chart",
+          "id": "chart",
+          "kind": "bar",
+          "unit": "%",
+          "max": 60,
+          "series": [
+            {
+              "label": "auto-merge",
+              "value": 46,
+              "tone": "good"
+            },
+            {
+              "label": "quick look",
+              "value": 38,
+              "tone": "warn"
+            },
+            {
+              "label": "deep review",
+              "value": 16,
+              "tone": "bad"
+            }
+          ]
+        }
+      ],
+      "cursor": [
+        {
+          "at": "approvals",
+          "to": "toggles.item1"
+        }
+      ],
+      "highlight": [
+        {
+          "at": "approvals",
+          "until": "small",
+          "target": "toggles.item1"
+        },
+        {
+          "at": "small",
+          "target": "toggles.item2"
+        }
+      ],
+      "say": "Teams set the rules: which paths are safe, which need two approvals, and what counts as small."
+    },
+    {
+      "id": "score",
+      "type": "scoreboard",
+      "bug": "FINAL",
+      "title": "WEEK ONE WITH RELAY",
+      "clock": "FULL TIME",
+      "transition": "flash",
+      "ticker": "40 PULL REQUESTS SORTED \u2022 18 AUTO-MERGED \u2022 4 SENT TO DEEP REVIEW",
+      "teams": [
+        {
+          "label": "Median wait",
+          "from": 77,
+          "value": 0.7,
+          "decimals": 1,
+          "suffix": " h",
+          "tone": "good",
+          "at": "drops"
+        },
+        {
+          "label": "Reviews per day",
+          "from": 9,
+          "value": 31,
+          "tone": "good",
+          "at": "days"
+        }
+      ],
+      "lowerThird": {
+        "title": "3 days \u2192 40 minutes",
+        "sub": "median time to merge",
+        "at": "three"
+      },
+      "say": "The result: the median wait drops from three days to forty minutes.",
+      "breath": 0.6
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "ticket",
+      "headline": "Next in line: yours.",
+      "accent": "yours",
+      "fields": [
+        {
+          "k": "PROJECT",
+          "v": "Mergeline"
+        },
+        {
+          "k": "LICENSE",
+          "v": "MIT"
+        },
+        {
+          "k": "WAIT",
+          "v": "0 min"
+        }
+      ],
+      "transition": "push",
+      "say": "Mergeline. Free and open source on GitHub.",
+      "hold": 4
+    }
+  ],
+  "meta": {
+    "useCase": "explainer",
+    "format": "Chalkboard Lesson",
+    "tone": "playful"
+  }
+}

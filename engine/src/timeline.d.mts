@@ -1,0 +1,16 @@
+import type { TrailerConfig, Timeline, TimelineScene, WalkShot } from './types';
+export const FPS: number;
+export const DEFAULT_GAP: number;
+export const V3_DEFAULTS: Record<string, { lead: number; tail: number; min: number }>;
+export const V3_GAP: number;
+export const SCENE_DEFAULTS: Record<string, { lead: number; tail: number; min: number }>;
+export const SCENE_TYPES: string[];
+export function sceneId(s: { id?: string; type: string }): string;
+export function beatFrames(config: TrailerConfig): number;
+export function buildTimeline(config: TrailerConfig, media?: { lines: { src: string | null; seconds: number; words?: unknown }[] }): Timeline;
+export function walkPlan(scene: TimelineScene, shots: WalkShot[]): { from: number; dur: number; click: number; ring: number; toast: number }[];
+export function itemTimes(scene: TimelineScene, count: number, startPad?: number): number[];
+export function settleFrame(scene: TimelineScene): number;
+export const LOOP_FADE: number;
+export function settledFrameAt(f: number, settle: number): number;
+export function settledStart(config: TrailerConfig): boolean;

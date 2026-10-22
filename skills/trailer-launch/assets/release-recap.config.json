@@ -1,0 +1,183 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Dileep2896/trailer/main/engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "Tinlark",
+  "tagline": "Version 2.0: the three changes that matter.",
+  "link": { "text": "tinlark.example/changelog", "url": "https://tinlark.example/changelog" },
+  "aspect": "16:9",
+  "targetSeconds": 45,
+  "narration": { "person": "third" },
+  "voice": { "provider": "deepgram", "model": "aura-2-hermes-en", "speed": 1.0 },
+  "forbiddenTerms": ["revolutionary", "game-changing", "game-changer", "seamless", "seamlessly", "supercharge", "unleash", "cutting-edge", "next-generation", "world-class", "blazing", "excited to announce"],
+  "meta": {
+    "useCase": "launch",
+    "launchKind": "release-recap",
+    "format": "F17 Countdown Changelog",
+    "formatWhy": "[FILL: why a ranked countdown fits this release, e.g. three user-visible changes of clearly different weight]",
+    "tone": "upbeat broadcast, short and punchy",
+    "range": { "from": "v1.6.0", "to": "v2.0.0" },
+    "notes": "Starter for a fictional release. Replace every name, number, source and line from the release mining in brief.md (see references/release-recap.md), then delete this note.",
+    "sources": [
+      { "claim": "No. 3: times correct around daylight saving", "source": "[FILL: PR #, commit hash]" },
+      { "claim": "No. 2: checks start 4 times faster", "source": "[FILL: benchmark file:line or PR body]" },
+      { "claim": "No. 1: job groups", "source": "[FILL: PR #, CHANGELOG line]" },
+      { "claim": "48 merged pull requests", "source": "[FILL: git log --merges --oneline v1.6.0..v2.0.0 | wc -l]" },
+      { "claim": "9 contributors", "source": "[FILL: git shortlog -sn --no-merges v1.6.0..v2.0.0 | wc -l]" }
+    ]
+  },
+  "theme": {
+    "mode": "dark",
+    "bg": "#0c1016",
+    "surface": "#151b24",
+    "ink": "#f1f4f8",
+    "muted": "#98a3b3",
+    "accent": "#ffc53d",
+    "accent2": "#3dd6ff",
+    "warn": "#ff5d5d",
+    "fonts": { "display": "Barlow Condensed", "ui": "Inter Tight", "mono": "IBM Plex Mono" },
+    "displayCase": "upper",
+    "displayWeight": 700,
+    "tracking": -0.01,
+    "radius": 10,
+    "background": "grid",
+    "chrome": "minimal",
+    "transition": "push",
+    "motion": "snappy",
+    "camera": "push",
+    "type": "split-reveal",
+    "motif": "scoreboard",
+    "grain": 0.03,
+    "rhythm": "mono"
+  },
+  "app": {
+    "font": "Geist",
+    "mono": "Geist Mono",
+    "bg": "#0f1115",
+    "surface": "#161a20",
+    "subtle": "#1d222a",
+    "ink": "#e8ecf1",
+    "muted": "#8b95a3",
+    "border": "#262c35",
+    "accent": "#2dd4bf",
+    "good": "#4ade80",
+    "bad": "#f87171",
+    "warn": "#fbbf24",
+    "radius": 8,
+    "size": 24,
+    "dark": true
+  },
+  "music": { "bpm": 120, "mood": "driving" },
+  "captions": { "position": "bottom", "style": "box", "fontRole": "ui", "size": 50, "weight": 700, "maxWords": 6 },
+  "scenes": [
+    {
+      "id": "open",
+      "type": "title",
+      "layout": "broadcast",
+      "bug": "RELEASE",
+      "channel": "v1.6.0 → v2.0.0",
+      "eyebrow": "Just shipped",
+      "title": "Tinlark 2.0",
+      "accent": "2.0",
+      "at": 0,
+      "transition": "cut",
+      "say": "Tinlark 2.0 is out. Here are the three changes that matter most.",
+      "breath": 0.4
+    },
+    {
+      "id": "no3",
+      "type": "split",
+      "mode": "before-after",
+      "transition": "push",
+      "left": {
+        "label": "No. 3 · BEFORE",
+        "tone": "bad",
+        "title": "Daylight saving week",
+        "sub": "nightly-backup shown 1 hour late"
+      },
+      "right": {
+        "label": "No. 3 · IN 2.0",
+        "tone": "good",
+        "at": "Now",
+        "title": "Every time zone, on time",
+        "sub": "schedules follow the server's clock"
+      },
+      "say": "Number 3. Around daylight saving, jobs used to show an hour late. Now the clock is right.",
+      "breath": 0.5
+    },
+    {
+      "id": "no2",
+      "type": "kinetic",
+      "transition": "zoom",
+      "layout": "center",
+      "beats": [
+        { "text": "No. 2", "fx": "stamp", "at": 0 },
+        { "text": "faster to start", "fx": "count", "count": { "from": 1, "to": 4, "suffix": "×" }, "at": "faster" }
+      ],
+      "say": "Number 2. Checks start 4 times faster, so a new server is watched in seconds.",
+      "breath": 0.5
+    },
+    {
+      "id": "no1",
+      "type": "ui",
+      "turn": true,
+      "frame": "browser",
+      "url": "tinlark.example/groups",
+      "transition": "flash",
+      "poster": true,
+      "side": {
+        "eyebrow": "No. 1",
+        "title": "Job groups",
+        "accent": "groups",
+        "points": [
+          { "text": "Tag a batch once", "at": "Tag" },
+          { "text": "One alert for all of them", "at": "alert" }
+        ]
+      },
+      "elements": [
+        { "type": "header", "id": "head", "title": "Groups", "sub": "prod · 3 groups", "actions": ["New group"] },
+        {
+          "type": "list",
+          "id": "groups",
+          "items": [
+            { "title": "nightly-backups", "sub": "12 jobs · alert #ops-oncall once", "badge": { "text": "group", "tone": "accent" }, "at": "Tag" },
+            { "title": "billing-exports", "sub": "6 jobs · alert #finance-ops once", "badge": { "text": "group", "tone": "accent" }, "at": "batch" },
+            { "title": "cache-warmers", "sub": "20 jobs · quiet hours 01:00 to 05:00", "badge": { "text": "group", "tone": "accent" }, "at": "covers" }
+          ]
+        }
+      ],
+      "cursor": [{ "at": { "word": "Tag", "offset": -0.2 }, "to": "head.action0" }],
+      "highlight": [{ "at": "covers", "target": "groups.item0" }],
+      "notes": [{ "at": "alert", "target": "groups.item0", "text": "12 jobs, 1 alert", "side": "right" }],
+      "say": "And number 1: job groups. Tag a batch of jobs once, and one alert covers all of them.",
+      "breath": 0.8
+    },
+    {
+      "id": "tally",
+      "type": "scoreboard",
+      "bug": "FINAL",
+      "title": "TINLARK 1.6 → 2.0",
+      "clock": "RELEASE",
+      "transition": "slide-stack",
+      "ticker": "48 PULL REQUESTS MERGED  •  9 CONTRIBUTORS  •  v2.0.0",
+      "teams": [
+        { "label": "Pull requests merged", "from": 0, "value": 48, "tone": "good", "at": "48" },
+        { "label": "Contributors", "from": 0, "value": 9, "tone": "good", "at": "contributors" }
+      ],
+      "say": "In all, 48 pull requests from 9 contributors since version 1.6.",
+      "breath": 0.8
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "card",
+      "transition": "dissolve",
+      "headline": "Update in one command.",
+      "accent": "one command",
+      "tagline": "npm install tinlark@2",
+      "at": 0,
+      "nameAt": "Tinlark",
+      "say": "Update in one command. Tinlark 2.0, free and open source.",
+      "hold": 4.5
+    }
+  ]
+}

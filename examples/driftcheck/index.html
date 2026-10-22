@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Driftcheck</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="side">
+        <div class="brand"><i></i>Driftcheck</div>
+        <nav class="nav">
+          <a class="on" href="#">Drift</a>
+          <a href="#">Environments</a>
+          <a href="#">History</a>
+          <a href="#">Settings</a>
+        </nav>
+      </aside>
+      <main>
+        <div class="head">
+          <div>
+            <h1>Config drift</h1>
+            <p id="sub">Every key, every environment, before the deploy.</p>
+          </div>
+          <button class="btn" data-testid="run">Check again</button>
+        </div>
+        <section class="stats" id="stats"></section>
+        <table data-testid="drift">
+          <thead>
+            <tr><th>Key</th><th>Source</th><th id="envs"></th><th>Status</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

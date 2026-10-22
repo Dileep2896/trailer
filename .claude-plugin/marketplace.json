@@ -1,0 +1,17 @@
+{
+  "name": "trailer",
+  "description": "Trailer: narrated explainer films and shorts made from any codebase.",
+  "owner": {
+    "name": "Dileep Kumar Sharma",
+    "url": "https://github.com/Dileep2896"
+  },
+  "plugins": [
+    {
+      "name": "trailer",
+      "source": "./",
+      "description": "Turn any software project into a voiced, captioned explainer film or vertical short.",
+      "category": "productivity",
+      "keywords": ["video", "remotion", "explainer", "shorts"]
+    }
+  ]
+}

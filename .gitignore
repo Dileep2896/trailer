@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Remotion's headless browser (the engine keeps it in TRAILER_HOME/browser; older runs left it here)
+.remotion/
+
+# Engine: generated at runtime
+engine/public/sfx/
+engine/public/vo/
+engine/public/shots/
+engine/public/music/
+engine/out/
+engine/src/generated/
+
+# Per-project trailer state (configs, briefs, scripts and assets are committed)
+**/.trailer/out/
+**/.trailer/voice/
+**/.trailer/shots/
+**/.trailer/review/
+**/.trailer/.stage/
+**/.trailer/private/
+**/.trailer/.env
+
+# Secrets and local files
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+pnpm-debug.log*
+*.tsbuildinfo
+coverage/
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Large media never belongs in git (docs/media keeps small GIFs and posters only)
+*.mp4
+*.mov
+*.wav
+!engine/public/characters/**

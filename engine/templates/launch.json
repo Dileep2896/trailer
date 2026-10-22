@@ -1,0 +1,584 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Dileep2896/trailer/main/engine/schema/trailer.schema.json",
+  "version": 1,
+  "projectName": "Tinlark",
+  "tagline": "Hears the scheduled job that never ran.",
+  "link": {
+    "text": "tinlark.example",
+    "url": "https://tinlark.example"
+  },
+  "aspect": "16:9",
+  "targetSeconds": 55,
+  "narration": {
+    "person": "third"
+  },
+  "voice": {
+    "provider": "deepgram",
+    "model": "aura-2-hermes-en",
+    "speed": 1
+  },
+  "forbiddenTerms": [
+    "revolutionary",
+    "game-changing",
+    "game-changer",
+    "seamless",
+    "seamlessly",
+    "supercharge",
+    "unleash",
+    "cutting-edge",
+    "next-generation",
+    "world-class",
+    "blazing",
+    "excited to announce"
+  ],
+  "meta": {
+    "useCase": "launch",
+    "launchKind": "product",
+    "format": "F16 Unboxing",
+    "formatWhy": "[FILL: one sentence on why the problem's shape fits a box that unpacks one feature at a time]",
+    "tone": "warm, confident, plain-spoken",
+    "notes": "Starter for a fictional product. Every name, number, source, token and line below is a placeholder. Replace all of it from brief.md, then delete this note.",
+    "sources": [
+      {
+        "claim": "a skipped run was flagged in 2 minutes",
+        "source": "[FILL: test or benchmark file:line]"
+      },
+      {
+        "claim": "4 days until a skipped run was noticed",
+        "source": "[FILL: seed data or public evidence, attributed generically]"
+      },
+      {
+        "claim": "teams track schedules in a spreadsheet",
+        "source": "[FILL: public evidence URL, kept in brief.md only]"
+      }
+    ]
+  },
+  "theme": {
+    "mode": "light",
+    "bg": "#efe6d6",
+    "surface": "#fbf6ec",
+    "ink": "#231d16",
+    "muted": "#6d6253",
+    "accent": "#d9480f",
+    "accent2": "#2b6cb0",
+    "warn": "#c92a2a",
+    "fonts": {
+      "display": "Unbounded",
+      "ui": "Hanken Grotesk",
+      "mono": "JetBrains Mono"
+    },
+    "displayCase": "none",
+    "displayWeight": 700,
+    "tracking": -0.03,
+    "radius": 16,
+    "background": "paper-grain",
+    "chrome": "mac",
+    "transition": "slide-stack",
+    "motion": "bouncy",
+    "camera": "drift",
+    "type": "stamp",
+    "motif": "none",
+    "grain": 0.04,
+    "rhythm": "mono"
+  },
+  "app": {
+    "font": "Geist",
+    "mono": "Geist Mono",
+    "bg": "#0f1115",
+    "surface": "#161a20",
+    "subtle": "#1d222a",
+    "ink": "#e8ecf1",
+    "muted": "#8b95a3",
+    "border": "#262c35",
+    "accent": "#2dd4bf",
+    "good": "#4ade80",
+    "bad": "#f87171",
+    "warn": "#fbbf24",
+    "radius": 8,
+    "size": 24,
+    "dark": true
+  },
+  "music": {
+    "bpm": 116,
+    "mood": "driving"
+  },
+  "captions": {
+    "position": "bottom",
+    "style": "pill",
+    "fontRole": "ui",
+    "size": 50,
+    "weight": 700,
+    "maxWords": 6
+  },
+  "scenes": [
+    {
+      "id": "open",
+      "type": "chat",
+      "style": "thread",
+      "title": "ops-oncall",
+      "transition": "cut",
+      "people": {
+        "sup": {
+          "name": "Support",
+          "avatar": "weary-face"
+        },
+        "ops": {
+          "name": "On-call",
+          "avatar": "technologist"
+        }
+      },
+      "messages": [
+        {
+          "from": "sup",
+          "text": "Can someone restore last night's backup?",
+          "at": 0
+        },
+        {
+          "from": "ops",
+          "text": "Last backup: Thursday, 02:00.",
+          "tone": "bad",
+          "reaction": "exploding-head",
+          "at": "Thursday"
+        }
+      ],
+      "say": "Monday morning. The nightly backup hasn't run since Thursday. Nobody knew.",
+      "breath": 0.6
+    },
+    {
+      "id": "silence",
+      "type": "ui",
+      "frame": "panel",
+      "captions": "top",
+      "transition": "push",
+      "width": 1320,
+      "elements": [
+        {
+          "type": "code",
+          "id": "log",
+          "file": "/var/log/cron.log",
+          "lines": [
+            {
+              "text": "Wed 02:00  backup.sh  exit 0",
+              "at": 0
+            },
+            {
+              "text": "Thu 02:00  backup.sh  exit 0",
+              "at": "ran"
+            },
+            {
+              "text": "Fri        (nothing)",
+              "at": "never"
+            },
+            {
+              "text": "Sat        (nothing)",
+              "at": "never"
+            },
+            {
+              "text": "Sun        (nothing)",
+              "at": "error"
+            }
+          ]
+        }
+      ],
+      "highlight": [
+        {
+          "at": "never",
+          "target": "log.line2"
+        }
+      ],
+      "notes": [
+        {
+          "at": "error",
+          "target": "log.line4",
+          "text": "No error. No alert.",
+          "side": "right"
+        }
+      ],
+      "say": "Logs only list jobs that ran. A job that never starts leaves no error to catch.",
+      "breath": 0.6
+    },
+    {
+      "id": "workaround",
+      "type": "evidence",
+      "layout": "row",
+      "transition": "slide-stack",
+      "eyebrow": "Today's fix",
+      "cards": [
+        {
+          "kind": "headline",
+          "meta": "THE USUAL WORKAROUND",
+          "text": "A spreadsheet of every cron schedule",
+          "source": "[FILL: generic attribution]",
+          "at": "spreadsheet"
+        },
+        {
+          "kind": "stat",
+          "value": "4 days",
+          "text": "until a skipped run was noticed",
+          "source": "[FILL: generic attribution]",
+          "at": "hand"
+        }
+      ],
+      "cast": [
+        {
+          "who": "notionists/theo",
+          "pose": "phone",
+          "x": 1560,
+          "size": 320,
+          "mood": "frustrated",
+          "at": "hand",
+          "enter": "pop"
+        }
+      ],
+      "say": "So teams keep a spreadsheet of schedules and check it by hand.",
+      "breath": 0.8
+    },
+    {
+      "id": "turn",
+      "type": "kinetic",
+      "turn": true,
+      "transition": "flash",
+      "captions": "off",
+      "beats": [
+        {
+          "text": "Tinlark ships today.",
+          "accent": "Tinlark",
+          "fx": "split",
+          "at": 0
+        },
+        {
+          "text": "It hears the silence.",
+          "accent": "silence",
+          "fx": "mask",
+          "at": "listens"
+        }
+      ],
+      "cast": [
+        {
+          "who": "blob",
+          "shape": "bot",
+          "color": "#2dd4bf",
+          "accessory": "headset",
+          "x": 1600,
+          "size": 240,
+          "mood": "determined",
+          "at": "listens",
+          "react": [
+            {
+              "at": "quiet",
+              "kind": "jump"
+            }
+          ],
+          "pops": [
+            {
+              "at": "quiet",
+              "emoji": "party-popper"
+            }
+          ]
+        }
+      ],
+      "say": "Tinlark ships today. It listens for the job that stays quiet.",
+      "breath": 0.4
+    },
+    {
+      "id": "ping",
+      "type": "ui",
+      "frame": "browser",
+      "url": "tinlark.example/jobs/new",
+      "transition": "zoom",
+      "side": {
+        "eyebrow": "In the box · 1 of 3",
+        "title": "One line per job",
+        "accent": "One line",
+        "points": [
+          {
+            "text": "Works from any language",
+            "at": "language"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Add a job",
+          "sub": "nightly-backup · every day at 02:00"
+        },
+        {
+          "type": "code",
+          "id": "snippet",
+          "file": "backup.sh",
+          "lines": [
+            {
+              "text": "pg_dump prod > /backups/nightly.sql",
+              "at": 0
+            },
+            {
+              "text": "curl -fsS https://ping.tinlark.example/7f3a",
+              "at": "pings"
+            }
+          ]
+        }
+      ],
+      "highlight": [
+        {
+          "at": "pings",
+          "target": "snippet.line1"
+        }
+      ],
+      "say": "Each job pings Tinlark when it finishes. One line, in any language.",
+      "breath": 0.5
+    },
+    {
+      "id": "late",
+      "type": "ui",
+      "frame": "browser",
+      "url": "tinlark.example/jobs",
+      "transition": "push",
+      "poster": true,
+      "side": {
+        "eyebrow": "In the box · 2 of 3",
+        "title": "Late means red",
+        "accent": "red",
+        "points": [
+          {
+            "text": "1 minute past schedule",
+            "at": "minute"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Jobs",
+          "sub": "4 scheduled · prod"
+        },
+        {
+          "type": "table",
+          "id": "jobs",
+          "columns": [
+            "Job",
+            "Schedule",
+            "Last ping",
+            "Status"
+          ],
+          "widths": [
+            2.2,
+            1.6,
+            1.4,
+            1.2
+          ],
+          "rows": [
+            [
+              "nightly-backup",
+              "daily 02:00",
+              "02:00:41",
+              {
+                "text": "On time",
+                "tone": "good",
+                "badge": true
+              }
+            ],
+            [
+              "invoice-export",
+              "hourly :15",
+              "09:15:03",
+              {
+                "text": "On time",
+                "tone": "good",
+                "badge": true
+              }
+            ],
+            [
+              "cache-warm",
+              "every 10 min",
+              "09:20:12",
+              {
+                "text": "On time",
+                "tone": "good",
+                "badge": true
+              }
+            ]
+          ],
+          "states": [
+            {
+              "at": "red",
+              "row": 0,
+              "set": {
+                "cells": [
+                  "nightly-backup",
+                  "daily 02:00",
+                  "missed",
+                  {
+                    "text": "Late",
+                    "tone": "bad",
+                    "badge": true
+                  }
+                ],
+                "tone": "bad"
+              }
+            }
+          ]
+        }
+      ],
+      "spotlight": [
+        {
+          "at": "red",
+          "target": "jobs.row0"
+        }
+      ],
+      "camera": [
+        {
+          "at": "Miss",
+          "focus": "jobs",
+          "zoom": 1.2
+        },
+        {
+          "at": "-0.6s",
+          "reset": true
+        }
+      ],
+      "say": "Miss a ping, and the job turns red 1 minute past its schedule.",
+      "breath": 0.6
+    },
+    {
+      "id": "alert",
+      "type": "ui",
+      "frame": "browser",
+      "url": "tinlark.example/alerts/nightly-backup",
+      "transition": "slide-stack",
+      "side": {
+        "eyebrow": "In the box · 3 of 3",
+        "title": "An alert that explains itself",
+        "accent": "explains",
+        "points": [
+          {
+            "text": "Job, last good run, server",
+            "at": "server"
+          }
+        ]
+      },
+      "elements": [
+        {
+          "type": "header",
+          "id": "head",
+          "title": "Alert",
+          "sub": "sent to #ops-oncall",
+          "actions": [
+            "Acknowledge"
+          ]
+        },
+        {
+          "type": "card",
+          "id": "msg",
+          "tone": "bad",
+          "title": "nightly-backup missed its 02:00 run",
+          "body": "Last good run: Thursday 02:00:41 on db-1.",
+          "badge": {
+            "text": "Late",
+            "tone": "bad"
+          },
+          "at": "names"
+        },
+        {
+          "type": "kv",
+          "id": "facts",
+          "pairs": [
+            [
+              "Job",
+              "nightly-backup"
+            ],
+            [
+              "Last good run",
+              "Thu 02:00:41"
+            ],
+            [
+              "Server",
+              "db-1"
+            ]
+          ],
+          "at": "last"
+        }
+      ],
+      "highlight": [
+        {
+          "at": "server",
+          "target": "facts"
+        }
+      ],
+      "cursor": [
+        {
+          "at": {
+            "word": "server",
+            "offset": 0.4
+          },
+          "to": "head.action0"
+        }
+      ],
+      "say": "The alert names the job, its last good run, and its server.",
+      "breath": 0.6
+    },
+    {
+      "id": "proof",
+      "type": "split",
+      "mode": "before-after",
+      "transition": "wipe",
+      "left": {
+        "label": "BEFORE",
+        "tone": "bad",
+        "stat": {
+          "value": 4,
+          "from": 0,
+          "suffix": " days",
+          "label": "until a skipped run was noticed"
+        }
+      },
+      "right": {
+        "label": "WITH TINLARK",
+        "tone": "good",
+        "at": "2",
+        "stat": {
+          "value": 2,
+          "from": 4,
+          "suffix": " min",
+          "label": "until it was flagged"
+        }
+      },
+      "say": "On the demo fleet, a skipped run was flagged in 2 minutes, not 4 days.",
+      "breath": 1.4,
+      "sfx": [
+        {
+          "at": "flagged",
+          "sound": "ding"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "type": "outro",
+      "layout": "ticket",
+      "transition": "push",
+      "headline": "Delivered today.",
+      "accent": "today",
+      "fields": [
+        {
+          "k": "PRODUCT",
+          "v": "Tinlark"
+        },
+        {
+          "k": "STATUS",
+          "v": "Live"
+        },
+        {
+          "k": "PLAN",
+          "v": "Free to start"
+        }
+      ],
+      "at": 0,
+      "nameAt": "Tinlark",
+      "say": "Tinlark is live today, free to start.",
+      "hold": 4.5
+    }
+  ]
+}

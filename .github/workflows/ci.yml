@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, tests, lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # CI never renders, so it needs no browser download.
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: engine/pnpm-lock.yaml
+
+      - name: Install engine dependencies
+        working-directory: engine
+        run: pnpm install --frozen-lockfile --ignore-workspace
+
+      - name: Typecheck
+        working-directory: engine
+        run: pnpm typecheck
+
+      - name: Unit tests
+        working-directory: engine
+        run: pnpm test
+
+      - name: Schema is current
+        working-directory: engine
+        run: node scripts/gen-schema.mjs --check
+
+      - name: Lint the example (film and every cut)
+        run: node engine/trailer.mjs examples/driftcheck --lint --all
+
+      - name: Lint the skill starter configs and init templates (zero warnings)
+        run: |
+          set -euo pipefail
+          # engine/templates/*.json are the single source; each skill asset must be a byte copy.
+          for pair in trailer/assets/starter.config.json:explainer trailer-launch/assets/launch.config.json:launch \
+                      trailer-jobhunt/assets/jobhunt.config.json:jobhunt trailer-hackathon/assets/hackathon.config.json:hackathon; do
+            cmp "skills/${pair%%:*}" "engine/templates/${pair##*:}.json"
+          done
+          for f in skills/*/assets/*.config.json engine/templates/*.json; do
+            echo "::group::$f"
+            node engine/trailer.mjs "$RUNNER_TEMP/lint-project" --config "$f" --lint --all --json > "$RUNNER_TEMP/lint.json"
+            node -e "
+              const j = JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'));
+              const w = (j.renders ?? [j]).flatMap((r) => r.warnings ?? []);
+              for (const m of w) console.log('::error file=$f::' + m);
+              if (w.length) process.exit(1);
+            " "$RUNNER_TEMP/lint.json"
+            echo "::endgroup::"
+          done
+
+      - name: Plugin manifests
+        run: |
+          set -euo pipefail
+          node -e "
+            const fs = require('fs');
+            const read = (f) => JSON.parse(fs.readFileSync(f, 'utf8'));
+            const p = read('.claude-plugin/plugin.json');
+            const m = read('.claude-plugin/marketplace.json');
+            const v = read('engine/package.json').version;
+            if (p.name !== 'trailer') throw new Error('plugin.json name must be trailer');
+            if (!m.plugins.some((e) => e.name === p.name && e.source === './')) throw new Error('marketplace entry must be trailer with source ./');
+            if (p.version !== v) throw new Error('plugin.json version ' + p.version + ' differs from engine/package.json ' + v);
+            console.log('plugin manifests ok: trailer ' + p.version);
+          "
+
+      - name: Privacy scan
+        run: node scripts/check-clean.mjs

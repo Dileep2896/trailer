@@ -1,0 +1,17 @@
+{
+  "project": "Driftcheck sample workspace",
+  "note": "Seed data for the trailer example. Every number here is made up.",
+  "environments": ["development", "staging", "production"],
+  "checkedAt": "Fri 18:02",
+  "incident": { "id": "0611", "deployedAt": "Fri 18:00", "reportedAt": "Fri 18:22", "checkoutFailingMinutes": 41, "codeChangesBetweenStagingAndProduction": 0 },
+  "summary": { "keys": 312, "environments": 3, "drifted": 4, "missing": 2, "changed": 1, "stale": 1 },
+  "keys": [
+    { "key": "PAYMENTS_TIMEOUT_MS", "file": "config/payments.yaml", "values": ["8000", "8000", null], "defaultWhenMissing": "2000", "status": "missing" },
+    { "key": "PAYMENTS_RETRY_LIMIT", "file": "config/payments.yaml", "values": ["3", "3", "3"], "status": "ok" },
+    { "key": "CHECKOUT_FEATURE_V2", "file": "config/flags.yaml", "values": ["on", "on", "off"], "status": "changed" },
+    { "key": "SESSION_SECRET", "file": "secrets/session.env", "values": ["rotated 2d", "rotated 2d", "rotated 94d"], "status": "stale" },
+    { "key": "CACHE_TTL_SECONDS", "file": "config/cache.yaml", "values": ["300", "300", "300"], "status": "ok" },
+    { "key": "EMAIL_PROVIDER_REGION", "file": "config/email.yaml", "values": ["eu-west", "eu-west", null], "status": "missing" },
+    { "key": "LOG_LEVEL", "file": "config/logging.yaml", "values": ["debug", "info", "info"], "status": "ok" }
+  ]
+}
