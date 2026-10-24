@@ -16,6 +16,7 @@ when_to_use: >-
   trailer-shorts.
 argument-hint: "[project-dir] [event name]"
 allowed-tools:
+  - AskUserQuestion
   - Read
   - Grep
   - Glob
@@ -97,8 +98,9 @@ are `ok`, `seconds`, `words`, `wordBudget`, `voice.engine`, `voice.fallback`,
 
 ## Inputs: ask once, then go
 
-Collect these in **one** message. If the user already gave them or skips the question, use
-the defaults and do not ask again. Open the message with the token note and tier choice from
+Collect these through the intake pickers (AskUserQuestion, at most two calls; free-text
+answers such as the event name go in the "Other" text box). If the user already gave them or
+skips the question, use the defaults and do not ask again. Open with the token note and tier choice from
 [intake.md](../trailer/references/intake.md): default **Quick** when
 the deadline is under an hour away, else **Standard**; offer Studio only if there is time.
 Add the core pre-questions that the table below does not already cover (voice, limits and proof).

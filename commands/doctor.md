@@ -31,7 +31,7 @@ yet: the first render installs them, or run the `install` command it names.
   text, no API key), recommended for anything that will be published, and the system voice,
   which works for drafts but sounds robotic. A natural voice needs `DEEPGRAM_API_KEY` in the
   environment, in `<dir>/.trailer/.env` or in `<dir>/.env` (after checking that file is
-  gitignored). Never ask the user to paste a key into the chat.
+  gitignored). Never ask for a key in plain chat; the only way in is the intake picker (see `voice.md`).
 - If `node` itself is missing or older than 20, say to install Node 20 or newer first.
 
 Remotion, which renders the films, has its own license: free for individuals and companies

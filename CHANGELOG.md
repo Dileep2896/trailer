@@ -40,6 +40,12 @@ All notable changes to trailer are recorded here. The format follows
 
 ### Changed
 
+- Intake questions are now clickable option pickers (AskUserQuestion) instead of a typed,
+  numbered list: the recommended option comes first, and every question has a text box for a
+  custom answer. When the natural narrator is picked and no `DEEPGRAM_API_KEY` is set, a
+  follow-up picker offers a text box for the key, which is saved only to the git-ignored
+  `.trailer/.env` and never echoed. The typed list stays as the fallback when the tool is
+  unavailable.
 - Caption chunks split a long phrase into even parts (7 words at 3 a chunk: 3, 2, 2, never
   3, 3, 1) and avoid ending a chunk on a word that leans on the next ("the", "of", "to").
   The grouping lives in `src/phrases.mjs`, shared by the captions and the text mode's timer.

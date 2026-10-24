@@ -14,6 +14,7 @@ when_to_use: >-
   on social. Not for a 60 s 16:9 explainer (use the core trailer skill) or for posting.
 argument-hint: "[projectDir] [--fresh] [--platforms tiktok,reels,shorts,linkedin,x] [--seconds 15|20|30]"
 allowed-tools:
+  - AskUserQuestion
   - Read
   - Grep
   - Glob
@@ -172,7 +173,7 @@ plus or minus 3 s.
 
 ### 1. Preflight
 
-0. Send the single intake message from `${CLAUDE_PLUGIN_ROOT}/skills/trailer/references/intake.md`: the token note, the tier choice
+0. Run the intake pickers (AskUserQuestion) from `${CLAUDE_PLUGIN_ROOT}/skills/trailer/references/intake.md`: the token note, the tier choice
    (default **Quick**; path A, cutting from an existing film, is the cheapest option and
    should be offered first when a film exists) and the core pre-questions, plus the target
    platform. Follow the chosen tier's column from then on.

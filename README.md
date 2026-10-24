@@ -234,8 +234,12 @@ Audio you generate through Deepgram is subject to your own Deepgram account's te
 A film is token-heavy. The agent reads your project, writes a script and config, then looks at
 rendered frames as images, several times. Rendering, music and captions run locally and cost
 no tokens; a Deepgram voice is billed by Deepgram. So before reading a single file, every skill
-says this and asks one short message of questions (reply "defaults" to skip): tier, length and
-shape, audience and call to action, voice, and anything off-limits.
+says this and asks its questions as clickable options, the recommended one first (pick the top
+option everywhere for the defaults): tier, length and shape, voice, audience and call to
+action, and anything off-limits. Each question also has a text box for your own answer. If you
+pick the natural narrator and no Deepgram key is set, the next question offers a text box to
+paste it; it is saved to the git-ignored `.trailer/.env` and never shown again (it does stay
+in the session transcript, so you can add it to that file yourself instead).
 
 | | Quick | Standard (default) | Studio |
 | --- | --- | --- | --- |

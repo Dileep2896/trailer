@@ -85,8 +85,24 @@ is only used when chosen. Force a path with `--voice-engine deepgram|say|none|te
 4. Run `<engine> doctor <projectDir> --json`: `voice.key` is `present` or `absent` (never the
    value) and `voice.source` says which of the three places it came from.
 
-Rules for you, the model: never ask the user to paste a key into the chat, never write a key
-into any file yourself, never print or echo it, never pass it on a command line.
+Rules for you, the model: never ask for a key in plain chat text, never print or echo it, never
+pass it on a command line, and never write it anywhere except as described next.
+
+### A key pasted at intake
+
+The intake picker (`intake.md`, call 2) lets the user paste the key into the AskUserQuestion
+text box, after telling them it stays in the session transcript. When they do:
+
+1. Check it looks like a key (one token, no spaces). If not, say so in one line without
+   repeating what they typed, and fall back to no narration.
+2. Hold it until step 1 of the preflight has run `init`, then check that
+   `<projectDir>/.trailer/.gitignore` lists `.env` (add the line if it is missing).
+3. Write `<projectDir>/.trailer/.env` with the Write tool (never a shell command), containing
+   `DEEPGRAM_API_KEY=<key>` plus any lines already in that file. Never write it to
+   `<projectDir>/.env`, the config, the brief or any other file.
+4. Run `doctor <projectDir> --json` and confirm `voice.key: "present"` and
+   `voice.source` points at `.trailer/.env`. Report only "key saved to .trailer/.env"; never
+   quote the key or a prefix of it.
 
 ## Choosing a voice
 

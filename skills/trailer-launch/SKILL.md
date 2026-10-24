@@ -4,6 +4,7 @@ description: Make a voiced, captioned launch film from a software project. It co
 when_to_use: Trigger phrases include "launch video", "launch film", "announcement video", "announce this feature", "feature video", "what's new video", "release video", "release recap", "changelog video", "video for v2", "recap v1.4 to v1.5", "ship week", "launch week", "Product Hunt video" and "demo for the launch post". It also triggers when the user names a tag range or a version for a video. Do not use it for portfolio or job outreach films (trailer-jobhunt), hackathon demos (trailer-hackathon) or vertical-only shorts (trailer-shorts). Use the core trailer skill for general explainers.
 argument-hint: "[launch | feature <name> | recap <from>..<to>] [project dir]"
 allowed-tools:
+  - AskUserQuestion
   - Read
   - Grep
   - Glob
@@ -69,10 +70,10 @@ missing dependency (run `doctor`). All paths in the output are relative to the p
 
 ## Intake first
 
-Before reading the repo, send the single intake message from `${CLAUDE_PLUGIN_ROOT}/skills/trailer/references/intake.md`: the token note,
+Before reading the repo, run the intake pickers from `${CLAUDE_PLUGIN_ROOT}/skills/trailer/references/intake.md`: the token note,
 the tier choice (default **Standard**; Studio for a flagship launch, Quick for a feature
 teaser) and the core pre-questions. If the kind below is ambiguous, its one question goes in
-the same message. The workflow follows the chosen tier's column in `intake.md`.
+the same picker. The workflow follows the chosen tier's column in `intake.md`.
 
 ## Pick the kind first
 

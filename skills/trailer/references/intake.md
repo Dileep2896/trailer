@@ -1,8 +1,9 @@
 # Intake: the token note, the quality tier and the pre-questions
 
-Run this once, before any file is read or any engine call is made. It is one message to the
-user and one answer back. Every use-case skill (launch, jobhunt, hackathon, shorts) runs it
-too, adding its own questions to the same message.
+Run this once, before any file is read or any engine call is made (the one exception is
+`doctor --json`, to learn whether a voice key exists). It is a short text note followed by
+one or two AskUserQuestion pickers. Every use-case skill (launch, jobhunt, hackathon, shorts)
+runs it too, adding its own questions to the same pickers.
 
 ## 1. Tell the user what a film costs in tokens
 
@@ -51,34 +52,72 @@ The user can always rerun a film at a higher tier later. Path A in `trailer-shor
 short from an existing film) is the cheapest way to get a short, because it reuses the film's
 voice, scenes and sources.
 
-## 3. The pre-questions (one message, defaults shown)
+## 3. The pre-questions (option pickers, recommended first)
 
-Ask only what the request and the repo don't already answer, at most **five** core questions,
-each with its default in brackets so the user can reply "defaults". Merge the use-case skill's
-own questions into the same message; never send a second round. If the user says "just go",
-use every default.
+Ask with the **AskUserQuestion** tool, not as a typed list: the user clicks an option, and
+every question gets a free-text box ("Other") for anything the options don't cover. Print the
+token note and the tier summary (sections 1 and 2) as two or three lines of text first, then
+call the tool. Ask only what the request and the repo don't already answer. If the user said
+"just go" or "defaults", skip the questions and use every recommended option.
 
-1. **Quality tier:** Quick, Standard or Studio? [the use-case default below]
-2. **Length and shape:** 30, 45 or 60 seconds; 16:9, 9:16 or 1:1? [the use-case default]
-3. **Audience and takeaway:** who watches it, and what should they do afterwards (a link, a
-   repo, "try the demo")? [developers; the repo link]
-4. **Voice:** one of
-   - **Natural narrator** (Deepgram; needs a `DEEPGRAM_API_KEY`);
-   - **No narration: music, sound effects and on-screen text** (free, no API key; a finished
-     film, the script shown as titles at a reading pace);
-   - **System voice** (`say` / `espeak-ng`; free too, but it sounds robotic: fine for a draft);
-   - **Your own recording**.
+Tool rules: at most 4 questions per call, 2 to 4 options per question, a `header` of 12
+characters or fewer. Put the default option **first** with "(Recommended)" at the end of its
+label, so picking the top option everywhere equals the old "defaults". Never add an "Other"
+option yourself; the tool adds the text box. Use at most **two** calls; never a third round.
 
-   [natural if a key is found; with no key, no narration for anything meant to be published,
-   the system voice only if the user wants a quick draft]
+### Call 1: the core four
 
-   Check for the key first (`doctor <dir> --json`: `voice.key`) so the default in brackets is
-   the real one. With no key, do not silently pick the robot voice: ask, defaulting to no
-   narration. "No narration" sets `"voice": { "provider": "text" }` in the config (see
-   `voice.md`); it also changes the script: fewer, shorter lines (`craft.md`, "Writing for
-   reading").
-5. **Limits and proof:** any names, brands, numbers or customer data that must not appear, and
-   do you have a result number with its source? [none off-limits; proof from the repo only]
+| header | question | options (default first) |
+| --- | --- | --- |
+| `Tier` | Which quality tier? | the use-case default (Recommended), then the other two. Descriptions: Quick "cheapest, about a fifth of Studio's tokens (estimate); thinner story, no frame-by-frame polish"; Standard "about half of Studio (estimate); a complete film with one fix pass"; Studio "the full craft bar, up to 3 review loops; about 0.65M fresh + 16M cached tokens (measured)" |
+| `Shape` | How long, and which aspect ratio? | the use-case default (Recommended), then up to three of: `60 s, 16:9`, `45 s, 16:9`, `30 s, 9:16`, `60 s, 1:1`. The user can type any other length or ratio in the text box |
+| `Voice` | How should the film sound? | see the voice table below |
+| `Audience` | Who watches it, and what should they do afterwards? | your best guess from the repo (Recommended), e.g. "Developers → star the repo", then one or two real alternatives from the repo (a demo link, a waitlist, an email found in the README). Never invent a URL or address |
+
+Voice options. Check the key first (`doctor <dir> --json`: `voice.key`) so the order is right:
+
+| option label | description |
+| --- | --- |
+| `Natural narrator` | Deepgram Aura-2; needs a `DEEPGRAM_API_KEY` (billed by Deepgram). Add "found" or "not found yet: you can paste it next" to the description |
+| `No narration` | music, sound effects and on-screen titles; free, no API key, a finished film |
+| `Mac system voice` (`System voice` off macOS) | `say` / `espeak-ng`; free but robotic, fine for a draft |
+| `My own recording` | the user supplies a voice-over file |
+
+Default: `Natural narrator` when the key is present; otherwise `No narration` first and
+recommended. With no key, never default to the robot voice. "No narration" sets
+`"voice": { "provider": "text" }` in the config (see `voice.md`) and changes the script:
+fewer, shorter lines (`craft.md`, "Writing for reading").
+
+### Call 2: only what is still open
+
+Make this call only if at least one of these is needed, and fold them into one call (4 max):
+
+1. **The Deepgram key** (only if the user picked `Natural narrator` and `voice.key` is
+   `absent`). header `API key`, question: "Paste your Deepgram API key in the text box
+   (Other). It is saved to .trailer/.env, which git ignores, and never shown again. Note:
+   pasted text stays in this session's transcript; to avoid that, pick the first option and
+   add it yourself." Options:
+   - `I'll add it myself`: description: "Put `DEEPGRAM_API_KEY=...` in `<dir>/.trailer/.env`
+     or export it in your shell, then say go."
+   - `Use no narration instead`: description: "Free, a finished film with on-screen titles."
+
+   If the user pastes a key into the text box, handle it as `voice.md` ("A key pasted at
+   intake") says.
+2. **Limits and proof.** header `Limits`, question: "Anything that must not appear, and do you
+   have a result number with its source?" Options: `Nothing off-limits; proof from the repo
+   only (Recommended)`, `Keep real names out`. The user types specific limits or a number
+   with its source in the text box. Never invent a number.
+3. **The use-case skill's own questions** (launch kind, hackathon event and length cap,
+   jobhunt target and mode, shorts platforms). Turn each into options where the answer is a
+   choice; leave free-text answers (an event name, a URL) to the text box, with the default
+   from that skill's table as the first option.
+
+If more than four are open, keep the key question and the ones with no safe default; use the
+defaults for the rest and say which defaults you used in one line.
+
+If the AskUserQuestion tool is not available (a non-interactive run, another host), fall back
+to one typed message with each default in brackets, as in the example below, and accept
+"defaults".
 
 Use-case defaults:
 
@@ -90,7 +129,7 @@ Use-case defaults:
 | hackathon | Quick if under an hour to the deadline, else Standard | 60 s or the rules' cap, 16:9 |
 | shorts | Quick (or path A from an existing film) | 20 to 30 s, 9:16 |
 
-Example message:
+Fallback typed message (only when the tool is unavailable):
 
 > This makes a 60 s film. Heads-up on cost: the agent reads your project and reviews
 > rendered frames as images, so a Studio film is token-heavy (about 0.65M fresh plus 16M cached
@@ -105,7 +144,8 @@ Example message:
 ## 4. Record the answers
 
 Write the answers at the top of `.trailer/brief.md` under "Intake" (tier, length, aspect,
-audience, call to action, voice, limits, proof source). For "no narration", write
+audience, call to action, voice, limits, proof source). Never write a key, or any part of
+one, into the brief. For "no narration", write
 `voice: text (no narration)` and set `"voice": { "provider": "text" }` when the config is
 written; every later render then uses it directly, with no key check and no fallback. Every later step reads the tier from
 there and follows that tier's column above. In the delivery, name the tier used and, for Quick

@@ -4,6 +4,7 @@ description: Job-hunt portfolio film plus outreach drafts. Use it when someone h
 when_to_use: Use this skill when the film goes to a hiring team or founders and the user wants outreach copy with it. For a product launch use trailer-launch, for a hackathon demo use trailer-hackathon, for vertical cuts only use trailer-shorts, and for a general explainer use trailer.
 argument-hint: "[project-dir] [--target <company>] [--independent] [--first-person]"
 allowed-tools:
+  - AskUserQuestion
   - Read
   - Grep
   - Glob
@@ -87,8 +88,8 @@ These references are specific to jobhunt:
 | narration person | `--first-person`, or asked for | third person |
 | public evidence | target research (step 2) | qualitative pain, no numbers |
 
-Ask everything you need in **one message**, and only for what you can't infer. That message
-opens with the token note and the tier choice from `${CLAUDE_PLUGIN_ROOT}/skills/trailer/references/intake.md` (default **Studio** here,
+Ask everything you need through the intake pickers (AskUserQuestion, at most two calls), and
+only for what you can't infer. They open with the token note and the tier choice from `${CLAUDE_PLUGIN_ROOT}/skills/trailer/references/intake.md` (default **Studio** here,
 because a founder decides on this film; offer Standard or Quick as cheaper options and say
 what they give up), then the core pre-questions, then at most three of the questions above.
 Don't block the film on the profile. The film never needs it.

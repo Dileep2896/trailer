@@ -4,6 +4,7 @@ description: Turn any software project into a voiced, captioned explainer film (
 when_to_use: Use when the user says "make a video of this project", "trailer", "explainer video", "demo video", "promo film", "walkthrough video", "turn this repo into a video", "make a reel", or wants to show off something they built. Routes "launch / release / changelog / announce" to trailer-launch, "job / apply / portfolio / outreach / founders" to trailer-jobhunt, "hackathon / demo day / devpost / judges" to trailer-hackathon, and "short / reel / tiktok / vertical / 9:16" to trailer-shorts.
 argument-hint: "[explainer|launch|jobhunt|hackathon|shorts] [project-dir]"
 allowed-tools:
+  - AskUserQuestion
   - Read
   - Grep
   - Glob
@@ -107,17 +108,20 @@ directory.
 
 ## Step 0.5: intake (token note, tier, pre-questions)
 
-Before reading any file, follow `references/intake.md` and send the user **one** message:
+Before reading any file, follow `references/intake.md`: a short text note, then the questions
+as **AskUserQuestion option pickers** (never a typed numbered list unless the tool is
+unavailable):
 
 1. A two-line heads-up that a film is token-heavy (the agent reads the project and reviews
    rendered frames as images), with the per-tier figures from `intake.md`. Rendering runs locally.
 2. The three tiers: **Quick** (cheapest, thinner story, no frame-by-frame polish),
    **Standard** (the default) and **Studio** (the full bar below, the most tokens).
-3. At most five pre-questions with defaults in brackets: tier, length and shape, audience and
-   call to action, voice, limits and proof.
+3. Picker 1: tier, length and shape, voice, audience and call to action, each with the
+   default first as "(Recommended)". Picker 2, only if needed: the Deepgram key text box (when
+   the natural narrator was picked and no key exists), limits and proof.
 
 Skip anything the request already answers; if the user says "defaults" or "just go", use the
-defaults. Record the answers under "Intake" in `brief.md`. **Every step below follows the
+recommended options without asking. Record the answers under "Intake" in `brief.md`. **Every step below follows the
 chosen tier's column in `intake.md`**: the file cap in step 2, the shortlist size in step 4,
 the number of `ui` scenes, whether step 8 runs, and the loop cap in step 10. The steps as
 written describe Studio.
@@ -140,7 +144,8 @@ written describe Studio.
    `DEEPGRAM_API_KEY` in the environment, `<dir>/.trailer/.env` or `<dir>/.env`; without one,
    the free choices are **no narration** (a finished film, the default for anything meant to
    be published) or the system voice (`say` / `espeak-ng`, robotic, for drafts). See
-   `references/voice.md`. Do not block on it, and never ask the user to paste a key into the chat.
+   `references/voice.md`. Do not block on it. If the user pasted a key into the intake picker,
+   save it now as `voice.md` ("A key pasted at intake") says; never ask for a key in plain chat.
 
 ## Step 2: inventory (read the project, do not run it)
 
